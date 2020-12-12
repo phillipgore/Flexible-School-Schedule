@@ -8,7 +8,7 @@
     "@babel/runtime": "^7.12.5",
     "autosize": "^4.0.2",
     "babel-runtime": "^6.26.0",
-    "bcrypt": "^3.0.8",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "core-js": "^2.6.12",
     "generate-random-password": "^1.0.1",
