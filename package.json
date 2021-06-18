@@ -24,7 +24,7 @@
     "sortablejs": "^1.12.0",
     "strip": "^3.0.0",
     "stripe": "^5.10.0",
-    "striptags": "^3.1.1",
+    "striptags": "^3.2.0",
     "yt-player": "^3.5.0"
   },
   "devDependencies": {
