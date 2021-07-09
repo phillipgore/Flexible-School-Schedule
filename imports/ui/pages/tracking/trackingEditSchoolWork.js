@@ -13,6 +13,51 @@ import _ from 'lodash'
 import './trackingEditSchoolWork.html';
 
 Template.trackingEditSchoolWork.helpers({
+	isType: function(isType, type) {
+		if (isType === type) {
+			return true;
+		}
+		return false;
+	},
+
+	subjectSpacing: function(subject, index) {
+		if (index === 0) {
+			return 'p-tn-t-30';
+		}
+		if (subject.precededByWork) {
+			return 'p-tn-t-54';
+		}
+		return 'p-tn-t-30';
+	},
+
+	subjectWorkExist: function(subjectId) {
+		if (subjectId === 'noSubject') {
+			return SchoolWork.find({subjectId: {$exists: false}, schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId')}).count();
+		}
+		return SchoolWork.find({subjectId: subjectId, schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId')}).count();
+	},
+
+	subjectWork: function(subjectId) {
+		if (subjectId === 'noSubject') {
+			let work = SchoolWork.find({subjectId: {$exists: false}, schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId')}, {sort: {name: 1}}).fetch();
+			work.forEach(work => {
+				let notes = Notes.findOne({schoolWorkId: work._id});
+				if (notes) {
+					work.note = notes.note;
+				}
+			})
+			return work;
+		}
+		let work = SchoolWork.find({subjectId: subjectId, schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId')}, {sort: {name: 1}}).fetch();
+		work.forEach(work => {
+			let notes = Notes.findOne({schoolWorkId: work._id});
+			if (notes) {
+				work.note = notes.note;
+			}
+		})
+		return work;
+	},
+
 	workLessons: function(schoolWorkId) {
 		return Lessons.find({schoolWorkId: schoolWorkId, weekId: FlowRouter.getParam('selectedWeekId'), studentId: FlowRouter.getParam('selectedStudentId')}, {order: {order: 1, weekDay: 1}});
 	},
@@ -228,7 +273,6 @@ Template.trackingEditSchoolWork.helpers({
 
 Template.trackingEditSchoolWork.events({
 	'change .js-checkbox'(event) {
-		console.log('wow')
 	    if ($(event.currentTarget).val() === 'true') {
 	    	$(event.currentTarget).val('false');
 	    	$('.js-check-multiple-all').val('false').prop('checked', false);

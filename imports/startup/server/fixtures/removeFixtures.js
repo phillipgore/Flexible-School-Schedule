@@ -4,8 +4,11 @@ import {SchoolYears} from '../../../api/schoolYears/schoolYears.js';
 import {Terms} from '../../../api/terms/terms.js';
 import {Weeks} from '../../../api/weeks/weeks.js';
 import {Resources} from '../../../api/resources/resources.js';
+import {Subjects} from '../../../api/subjects/subjects.js';
 import {SchoolWork} from '../../../api/schoolWork/schoolWork.js';
 import {Lessons} from '../../../api/lessons/lessons.js';
+import {Paths} from '../../../api/paths/paths.js';
+import {Stats} from '../../../api/stats/stats.js';
 
 import {primaryInitialIds, resourcesInitialIds, usersInitialId, reportsInitialId, groupsInitialId} from '../../../modules/server/initialIds';
 import {upsertPaths, upsertSchoolWorkPaths} from '../../../modules/server/paths';
@@ -21,11 +24,14 @@ Meteor.methods({
 
 		Lessons.remove({groupId: groupId});
 		SchoolWork.remove({groupId: groupId});
+		Subjects.remove({groupId: groupId});
 		Weeks.remove({groupId: groupId});
 		Terms.remove({groupId: groupId});
 		SchoolYears.remove({groupId: groupId});
 		Students.remove({groupId: groupId});
 		Resources.remove({groupId: groupId});
+		Paths.remove({groupId: groupId});
+		Stats.remove({groupId: groupId});
 		
 		Groups.update(groupId, {$set: {
 			fixtureData: {

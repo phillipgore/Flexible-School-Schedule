@@ -1,144 +1,163 @@
 <template name="trackingSchoolWork">
-	{{#each work in schoolWork}}
-		{{#if workLessonsExist work._id}}
-			<div id="js-schoolWork-track-{{work._id}}" class="js-schoolWork-track track p-tn-t-21 | page-break-inside-avoid">
-				<div class="clearfix m-tn-h-9 m-tn-b-0 print-hide">
-					<div class="col-tn-5of7 col-xs-7of9 col-sm-5of7 col-xl-7of9 p-tn-r-6">
+	{{#each item in schoolWork}}
+		{{#if isType item.type 'subject'}}
+			<div class="m-tn-h-9 {{subjectSpacing item @index}}">
+				<div class="track-divider">
+					<div class="track-divider-label font-weight-600">
+						<div class="track-divider-icon">
+							<i class="txt-primary icn-subjects"></i>
+						</div>
+						{{item.name}}
+					</div>
+				</div>
+			</div>
+			{{#unless item.hasSchoolWork}}
+				<div class="font-style-italic txt-gray-darkest txt-tn-center p-tn-t-27 p-tn-b-8">No Items of Work</div>
+			{{/unless}}
+		{{/if}}
+
+		{{#if isType item.type 'work'}}
+			{{#if workLessonsExist item._id}}
+				<div id="js-work-track-{{item._id}}" class="js-work-track track p-tn-t-21 | page-break-inside-avoid">
+					<div class="clearfix m-tn-h-9 m-tn-b-0 print-hide">
+						<div class="col-tn-5of7 col-xs-7of9 col-sm-5of7 col-xl-7of9 p-tn-r-6">
+							<div class="track-icon"><i class="txt-primary icn-school-work"></i></div>
+							<div class="track-label txt-ellipsis">{{item.name}}</div>
+						</div>
+						<div class="col-tn-1of7 col-xs-1of9 col-sm-1of7 col-xl-1of9 p-tn-r-3">
+							<button id="{{item._id}}" class="js-show-schoolWork-info btn-block btn-gray-darker tiny fl-tn-right">
+								Info
+							</button>
+						</div>
+						<div class="col-tn-1of7 col-xs-1of9 col-sm-1of7 col-xl-1of9">
+							<button id="{{item._id}}" class="js-show-schoolWork-notes btn-block tiny fl-tn-right {{#if item.note.length}}btn-warning{{else}}btn-gray-darker{{/if}}">
+								Notes
+							</button>
+						</div>
+					</div>
+
+					<!-- Print Only -->
+					<div class="m-tn-h-9 m-tn-b-0  print-only-block">
 						<div class="track-icon"><i class="txt-primary icn-school-work"></i></div>
-						<div class="track-label txt-ellipsis">{{work.name}}</div>
+						<div class="track-label txt-ellipsis">{{item.name}}</div>
 					</div>
-					<div class="col-tn-1of7 col-xs-1of9 col-sm-1of7 col-xl-1of9 p-tn-r-3">
-						<button id="{{work._id}}" class="js-show-schoolWork-info btn-block btn-gray-darker tiny fl-tn-right">
-							Info
-						</button>
+					<!-- /Print Only -->
+
+					<div data-work-id="{{item._id}}" class="js-notes-{{item._id}} js-notes view-info tracking-view editor-notes m-tn-h-9 m-tn-t-6 m-tn-b-18 hide">
+						{{> editor classes="js-notes-editor" placeholder="This week is a bit different . . ." existingContent=item.note}}
+						<div class="js-notes-loader-{{item._id}} notes-loader bg-warning-lightest hide">
+							<div class="loader-icon loader-icon-sm loader-notes m-tn-rl-auto m-tn-t-45 m-tn-b-12"></div>
+							<div class="font-size-14 txt-warning-darkest">Saving Note</div>
+						</div>
 					</div>
-					<div class="col-tn-1of7 col-xs-1of9 col-sm-1of7 col-xl-1of9">
-						<button id="{{work._id}}" class="js-show-schoolWork-notes btn-block tiny fl-tn-right {{#if work.note.length}}btn-warning{{else}}btn-gray-darker{{/if}}">
-							Notes
-						</button>
+
+					<div class="js-info-{{item._id}} js-info view-info tracking-view p-tn-18 m-tn-h-9 m-tn-t-6 m-tn-b-18 hide">
+						<span class="js-info-loader-{{item._id}}">
+							{{> viewLoading}}
+						</span>
+						<span class="js-info-data-{{item._id}} hide">
+							{{#if workInfo.description}}
+								<section>
+									<label>General Instructions</label>
+									{{{workInfo.description}}}
+								</section>
+							{{else}}
+								<section>
+									<label>General Instructions</label>
+									<div class="txt-gray-darker">No Instructions.</div>
+								</section>
+							{{/if}}
+
+							{{#if workInfo.resources}}
+								<section>
+									<label class="p-tn-b-12">Resources</label>
+									<ul class="info-list">
+										{{#each resource in workInfo.resources}}
+											<li class="txt-ellipsis p-tn-b-3">
+												{{#if resource.link}}
+													<a href="{{resource.link}}"><i class="icn-{{resource.type}} txt-primary"></i> {{resource.title}}</a>
+												{{else}}
+													<i class="icn-{{resource.type}} txt-primary"></i> {{resource.title}}
+												{{/if}}
+											</li>
+										{{/each}}
+									</ul>
+								</section>
+							{{else}}
+								<section>
+									<label>Resources</label>
+									<div class="txt-gray-darker">No Resources.</div>
+								</section>
+							{{/if}}
+						</span>
 					</div>
-				</div>
 
-				<!-- Print Only -->
-				<div class="m-tn-h-9 m-tn-b-0  print-only-block">
-					<div class="track-icon"><i class="txt-primary icn-school-work"></i></div>
-					<div class="track-label txt-ellipsis">{{work.name}}</div>
-				</div>
-				<!-- /Print Only -->
-
-				<div data-work-id="{{work._id}}" class="js-notes-{{work._id}} js-notes view-info tracking-view editor-notes m-tn-h-9 m-tn-t-6 m-tn-b-18 hide">
-					{{> editor classes="js-notes-editor" placeholder="This week is a bit different . . ." existingContent=work.note}}
-					<div class="js-notes-loader-{{work._id}} notes-loader bg-warning-lightest hide">
-						<div class="loader-icon loader-icon-sm loader-notes m-tn-rl-auto m-tn-t-45 m-tn-b-12"></div>
-						<div class="font-size-14 txt-warning-darkest">Saving Note</div>
+					<div class="row track-btn-container m-tn-h-9">
+						{{#each lesson in workLessons item._id}}
+							<button data-schoolWork-id="{{item._id}}" data-lesson-id="{{lesson._id}}" class="js-lesson-btn col-tn-1of{{lessonCount item._id}} {{lessonStatus lesson item._id}} p-tn-rl-0">
+								<!-- <div class="txt-tn-left txt-black">{{lesson.order}}</div> -->
+								<div class="js-lesson-updating hide">
+									<div class="loader-icon loader-icon-tn loader-icon-center"></div>
+								</div>
+								<span class="js-lesson-weekday-label font-size-14">{{weekDays lesson.weekDay}}</span>
+							</button>
+						{{/each}}
 					</div>
-				</div>
 
-				<div class="js-info-{{work._id}} js-info view-info tracking-view p-tn-18 m-tn-h-9 m-tn-t-6 m-tn-b-18 hide">
-					<span class="js-info-loader-{{work._id}}">
-						{{> viewLoading}}
-					</span>
-					<span class="js-info-data-{{work._id}} hide">
-						{{#if workInfo.description}}
-							<section>
-								<label>General Instructions</label>
-								{{{workInfo.description}}}
-							</section>
-						{{else}}
-							<section>
-								<label>General Instructions</label>
-								<div class="txt-gray-darker">No Instructions.</div>
-							</section>
-						{{/if}}
+					{{#each lesson in workLessons item._id}}
+						<div id="{{lesson._id}}" class="js-lesson-input track-input">
 
-						{{#if workInfo.resources}}
-							<section>
-								<label class="p-tn-b-12">Resources</label>
-								<ul class="info-list">
-									{{#each resource in workInfo.resources}}
-										<li class="txt-ellipsis p-tn-b-3">
-											{{#if resource.link}}
-												<a href="{{resource.link}}"><i class="icn-{{resource.type}} txt-primary"></i> {{resource.title}}</a>
-											{{else}}
-												<i class="icn-{{resource.type}} txt-primary"></i> {{resource.title}}
-											{{/if}}
-										</li>
-									{{/each}}
-								</ul>
-							</section>
-						{{else}}
-							<section>
-								<label>Resources</label>
-								<div class="txt-gray-darker">No Resources.</div>
-							</section>
-						{{/if}}
-					</span>
-				</div>
-
-				<div class="row track-btn-container m-tn-h-9">
-					{{#each lesson in workLessons work._id}}
-						<button data-schoolWork-id="{{work._id}}" data-lesson-id="{{lesson._id}}" class="js-lesson-btn col-tn-1of{{lessonCount work._id}} {{lessonStatus lesson work._id}} p-tn-rl-0">
-							<!-- <div class="txt-tn-left txt-black">{{lesson.order}}</div> -->
-							<div class="js-lesson-updating hide">
-								<div class="loader-icon loader-icon-tn loader-icon-center"></div>
+							<div class="row m-tn-h-9">
+								<div class="track-arrow offset-tn-{{lessonPosition item._id lesson._id}}of{{lessonCount item._id}} col-tn-1of{{lessonCount item._id}}">
+								</div>
 							</div>
-							<span class="js-lesson-weekday-label font-size-14">{{weekDays lesson.weekDay}}</span>
-						</button>
+							
+							<form id="js-form-{{lesson._id}}" class="js-form-lessons-update track-form">
+								<div class="track-form-wrapper">
+									<span class="js-loader-{{lesson._id}}">
+										{{> lessonLoading}}
+									</span>
+									<span class="js-info-{{lesson._id}} hide">
+										<div class="row checkbox-collection p-tn-t-6">
+											<div class="col-tn-1of2">
+												<label class="checkbox">
+													<input class="js-assigned-checkbox" type="checkbox" name="assigned" value="{{lessonInfo.assigned}}" checked="{{lessonInfo.assigned}}">
+													<div class="checkbox-icon"></div> 
+													<div class="checkbox-label">Do Next</div>
+												</label>
+											</div>
+											<div class="col-tn-1of2">
+												<label class="checkbox fl-tn-right">
+													<input class="js-completed-checkbox" type="checkbox" name="completed" value="{{lessonInfo.completed}}" checked="{{lessonInfo.completed}}">
+													<div class="checkbox-icon"></div> 
+													<div class="checkbox-label">Complete</div>
+												</label>
+											</div>
+										</div>
+
+										<label>Completion Date</label>
+										<input type="text" id="completed-on-{{lesson._id}}" name="completedOn" class="js-completed-on" placeholder="MM DD, YYYY" value="{{dateFormat lesson.completedOn}}">
+										<label>Completion Time</label>
+										<div class="row">
+											<div class="col-tn-1of5">
+												<input type="text" name="completionTime" id="completion-time" placeholder="30" autocomplete="off" value="{{lessonInfo.completionTime}}">
+											</div>
+											<div class="col-tn-4of5 font-weight-normal p-tn-l-6 p-tn-t-9">Minutes</div>
+										</div>
+										<label>Completed Work</label>
+										{{> editor classes="js-description m-tn-b-18" placeholder="In this session we..." existingContent=lessonInfo.description}}
+										<footer class="toolbar toolbar-bottom toolbar-gray row">
+											<button data-close-id="{{lessonInfo._id}}" class="js-close btn btn-gray-darker fl-tn-left">Cancel</button>
+											<button type="submit" class="js-submit fl-tn-right">Update</button>
+										</footer>
+									</span>
+								</div>
+							</form>
+						</div>
 					{{/each}}
 				</div>
-
-				{{#each lesson in workLessons work._id}}
-					<div id="{{lesson._id}}" class="js-lesson-input track-input">
-
-						<div class="row m-tn-h-9">
-							<div class="track-arrow offset-tn-{{lessonPosition work._id lesson._id}}of{{lessonCount work._id}} col-tn-1of{{lessonCount work._id}}">
-							</div>
-						</div>
-						
-						<form id="js-form-{{lesson._id}}" class="js-form-lessons-update track-form">
-							<div class="track-form-wrapper">
-								<span class="js-loader-{{lesson._id}}">
-									{{> lessonLoading}}
-								</span>
-								<span class="js-info-{{lesson._id}} hide">
-									<div class="row checkbox-collection p-tn-t-6">
-										<div class="col-tn-1of2">
-											<label class="checkbox">
-												<input class="js-assigned-checkbox" type="checkbox" name="assigned" value="{{lessonInfo.assigned}}" checked="{{lessonInfo.assigned}}">
-												<div class="checkbox-icon"></div> 
-												<div class="checkbox-label">Do Next</div>
-											</label>
-										</div>
-										<div class="col-tn-1of2">
-											<label class="checkbox fl-tn-right">
-												<input class="js-completed-checkbox" type="checkbox" name="completed" value="{{lessonInfo.completed}}" checked="{{lessonInfo.completed}}">
-												<div class="checkbox-icon"></div> 
-												<div class="checkbox-label">Complete</div>
-											</label>
-										</div>
-									</div>
-
-									<label>Completion Date</label>
-									<input type="text" id="completed-on-{{lesson._id}}" name="completedOn" class="js-completed-on" placeholder="MM DD, YYYY" value="{{dateFormat lesson.completedOn}}">
-									<label>Completion Time</label>
-									<div class="row">
-										<div class="col-tn-1of5">
-											<input type="text" name="completionTime" id="completion-time" placeholder="30" autocomplete="off" value="{{lessonInfo.completionTime}}">
-										</div>
-										<div class="col-tn-4of5 font-weight-normal p-tn-l-6 p-tn-t-9">Minutes</div>
-									</div>
-									<label>Completed Work</label>
-									{{> editor classes="js-description m-tn-b-18" placeholder="In this session we..." existingContent=lessonInfo.description}}
-									<footer class="toolbar toolbar-bottom toolbar-gray row">
-										<button data-close-id="{{lessonInfo._id}}" class="js-close btn btn-gray-darker fl-tn-left">Cancel</button>
-										<button type="submit" class="js-submit fl-tn-right">Update</button>
-									</footer>
-								</span>
-							</div>
-						</form>
-					</div>
-				{{/each}}
-			</div>
+			{{/if}}
 		{{/if}}
+		
 	{{/each}}
 </template>

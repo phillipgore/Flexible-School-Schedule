@@ -74,6 +74,10 @@ function getInitialData() {
 		Session.set('selectedSchoolWorkId', initialIds.schoolWorkId);
 	}
 
+	if (!Session.get('selectedSchoolWorkType')) {
+		Session.set('selectedSchoolWorkType', initialIds.schoolWorkType);
+	}
+
 	// Initial Report
 	if (!Session.get('selectedReportId')) {
 		Session.set('selectedReportId', initialIds.reportId);

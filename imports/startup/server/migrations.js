@@ -285,8 +285,25 @@ Migrations.add({
 	}
 });
 
+Migrations.add({
+	version: 15,
+	name: 'Update Report Data.',
+	up: function() {
+		Reports.find().forEach(report => {
+			Reports.update(report._id, {$set: {
+				subjectReportVisible: false, 
+				subjectProgressVisible: false,
+				subjectStatsVisible: false,
+				subjectCompletedVisible: false,
+				subjectTimesVisible: false,
+				workReportVisible: true,
+			}});
+		})
+	}
+});
+
 // Meteor.startup(() => {
-// 	Migrations.migrateTo('14,rerun');
+// 	Migrations.migrateTo('15,rerun');
 // });
 
 

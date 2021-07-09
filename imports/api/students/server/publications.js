@@ -1,5 +1,4 @@
 import {Students} from '../students.js';
-import {SchoolYears} from '../../schoolYears/schoolYears.js';
 
 Meteor.publish('allStudents', function() {
 	if (!this.userId) {

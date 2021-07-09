@@ -142,8 +142,12 @@ Template.schoolYearsEdit.events({
 		let listId = '#' + $(event.currentTarget).attr('data-term-index');
 
 		if ($(listId).is(':visible')) {
+			$(event.currentTarget).find('.js-caret-right').show();
+			$(event.currentTarget).find('.js-caret-down').hide();
 			$(listId).slideUp(100);
 		} else {
+			$(event.currentTarget).find('.js-caret-right').hide();
+			$(event.currentTarget).find('.js-caret-down').show();
 			$(listId).slideDown(200);
 		}
 	},

@@ -4,6 +4,7 @@ import {SchoolYears} from '../../../api/schoolYears/schoolYears.js';
 import {Terms} from '../../../api/terms/terms.js';
 import {Weeks} from '../../../api/weeks/weeks.js';
 import {Resources} from '../../../api/resources/resources.js';
+import {Subjects} from '../../../api/subjects/subjects.js';
 import {SchoolWork} from '../../../api/schoolWork/schoolWork.js';
 
 import {primaryInitialIds, resourcesInitialIds, usersInitialId, reportsInitialId, groupsInitialId} from '../../../modules/server/initialIds';
@@ -26,21 +27,36 @@ Meteor.methods({
 			throw new Meteor.Error('no-students', 'You must add Students and School Years before adding School Work.');
 		}
 
-		let sourceSchoolWork = [
+		let sourceSubjects = [
 			{
-				name: "Artist Study: Vermeer",
-				description: "<p>1632-1675 Dutch Baroque. Morning Time.</p>",
-				resourceTitles: ['Vermeer Picture Study Portfolio'],
+				name: "Artist Study",
 			},
 			{
-				name: "Composer Study: Baroque Era",
+				name: "English",
+			},
+			{
+				name: "History",
+			},
+		];
+
+		let sourceSchoolWork = [
+			{
+				name: "Vermeer",
+				description: "<p>1632-1675 Dutch Baroque. Morning Time.</p>",
+				resourceTitles: ['Vermeer Picture Study Portfolio'],
+				subjectName: "Artist Study",
+			},
+			{
+				name: "Baroque Era",
 				description: "<p>Morning Time.</p>",
 				resourceTitles: [],
+				subjectName: "Artist Study",
 			},
 			{
 				name: "Current Events",
 				description: "<p>Listen to News Podcasts. Read Student Daily News. Watch talk shows and discuss with Dad. Read weekly blogs about current interests.</p>",
 				resourceTitles: [],
+				subjectName: "History",
 			},
 			{
 				name: "Botany",
@@ -51,24 +67,28 @@ Meteor.methods({
 				name: "Daily Grammar Geek",
 				description: "<p>Morning Time.</p>",
 				resourceTitles: ["Daily Grammar Geek"],
+				subjectName: "English",
 			},
 			{
 				name: "History of English Literature",
 				description: "<p>Chapters 60-85. Read 2 chapters a week. Read 3 chapters one week.</p>",
 				resourceTitles: ["History of English Literature for Boys and Girls"],
+				subjectName: "English",
 			},
 			{
 				name: "Tale of Two Cities",
 				description: "",
 				resourceTitles: ["Tale of Two Cities", "Ready Readers High School"],
+				subjectName: "English",
 			},
 			{
 				name: "Vocabulary",
 				description: "<p>Morning Time</p>",
 				resourceTitles: ["English from the Roots Up"],
+				subjectName: "English",
 			},
 			{
-				name: "Geography: Heidi's Alps",
+				name: "Heidi's Alps",
 				description: "<p>Read about 8 pages a week. Follow the Mapwork document ~ there are some things for map work that you'll do for every chapter in this book.</p>",
 				resourceTitles: ["Heidi's Alp: One Family's Search for Storybook Europe"],
 			},
@@ -78,24 +98,28 @@ Meteor.methods({
 				resourceTitles: ["Geometry/Trig"],
 			},
 			{
-				name: "Government: Miracle at Philadelphia",
+				name: "Miracle at Philadelphia",
 				description: "<p>Do one chapter a week.</p>",
 				resourceTitles: ["Miracle at Philadelphia"],
+				subjectName: "History",
 			},
 			{
-				name: "History: Ancient Egypt and Near East",
+				name: "Ancient Egypt and Near East",
 				description: "<p>Morning Time.</p>",
 				resourceTitles: ["Ancient Egypt and Her Neighbors", "Hungry Planet", "Khan Academy on Ancient Egypt", "Pharaoh's Boat", "The Great Pyramid", "Unwrapping the Pharaohs"],
+				subjectName: "History",
 			},
 			{
 				name: "Great Speeches",
 				description: "<p>Morning Time. Read long ones over two weeks.</p>",
 				resourceTitles: ['"Give Me Liberty or Give Me Death!" Patrick Henry', '"Letters to his Son" by Lord Chesterfield', 'Did Marie Antoinette Actually Say “Let Them Eat Cake”?', 'How the French Revolution Worked podcast'],
+				subjectName: "History",
 			},
 			{
-				name: "Logic: How to Read a Book",
+				name: "How to Read a Book",
 				description: "<p>Start at page 363. Do 2 or 3 of the tests.</p>",
 				resourceTitles: ["How to Read a Book"],
+				subjectName: "English",
 			}
 		];
 
@@ -127,6 +151,28 @@ Meteor.methods({
 				return [1, 2, 3, 4, 5, 7];
 			}
 		}
+
+		let fixtureSubjects = [];
+
+		SchoolYears.find({groupId: groupId}, {sort: {startYear: 1}, fields: {_id: 1}, limit: 2}).forEach(schoolYear => {
+			Students.find({groupId: groupId}, {fields: {_id: 1}}).forEach(student => {
+				sourceSubjects.forEach((subject, subjectIndex) => {
+					// Subjects.insert(subjectProperties);
+					fixtureSubjects.push({
+						name: subject.name,
+						studentId: student._id,
+						schoolYearId: schoolYear._id,
+						groupId: groupId, 
+						userId: userId, 
+						createdOn: new Date()
+					});
+				});
+			});
+		});
+
+		Subjects.batchInsert(fixtureSubjects);
+
+
 		let fixtureSchoolWork = [];
 
 		// Insert School Work
@@ -143,7 +189,7 @@ Meteor.methods({
 			Students.find({groupId: groupId}, {fields: {_id: 1}}).forEach(student => {
 				sourceSchoolWork.forEach((schoolWork, schoolWorkIndex) => {
 					let weekDayLabelOptions = weekDayLabels(timesPerWeek[schoolWorkIndex]);
-					fixtureSchoolWork.push({
+					let schoolWorkItem = {
 						name: schoolWork.name,
 						description: schoolWork.description,
 						resources: schoolWork.resources,
@@ -153,7 +199,13 @@ Meteor.methods({
 						groupId: groupId, 
 						userId: userId, 
 						createdOn: new Date()
-					});
+					};
+					if (schoolWork.subjectName) {
+						let subjectId = Subjects.findOne({name: schoolWork.subjectName, studentId: student._id, schoolYearId: schoolYear._id, groupId: groupId,}, {fields: {_id: 1}})._id;
+						schoolWorkItem.subjectId = subjectId;
+					}
+
+					fixtureSchoolWork.push(schoolWorkItem);
 				});
 			});
 		});

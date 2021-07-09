@@ -1,12 +1,8 @@
-import {Mongo} from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-
 import {Questions} from './questions.js';
 import _ from 'lodash';
 
 Meteor.methods({
 	insertQuestion(questionProperties) {
-		console.log(questionProperties)
 		const questionId = Questions.insert(questionProperties);
 		return questionId;
 	},

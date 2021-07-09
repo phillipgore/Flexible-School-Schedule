@@ -117,6 +117,7 @@ Accounts.onCreateUser((options, user) => {
 			termId: 'empty',
 			weekId: 'empty',
 			schoolWorkId: 'empty',
+			schoolWorkType: 'work',
 			userId: user._id,
 			reportId: 'empty',
 			groupId: 'empty',

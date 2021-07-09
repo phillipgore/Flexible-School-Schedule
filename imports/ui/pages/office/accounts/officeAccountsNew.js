@@ -74,6 +74,7 @@ Template.officeAccountsNew.events({
 				termId: 'empty',
 				weekId: 'empty',
 				schoolWorkId: 'empty',
+				schoolWorkType: 'work',
 				userId: 'empty',
 				reportId: 'empty',
 				groupId: 'empty',

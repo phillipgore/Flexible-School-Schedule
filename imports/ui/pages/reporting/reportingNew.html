@@ -29,8 +29,8 @@
 
 			<label>Report Data</label>
 			<div class="row">
-				<!-- School Year -->
 				<div class="col-lg-1of2 p-lg-r-18">
+					<!-- School Year -->
 					<div class="p-tn-b-18">
 						<div class="m-tn-b-6">
 							<label class="checkbox">
@@ -76,12 +76,8 @@
 						</div>
 						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">The total time spent doing School Work and the average time doing School Work per Term, Week and Segment.</div>
 					</div>
-				</div>
 
-
-
-				<!-- Terms -->
-				<div class="col-lg-1of2 p-lg-l-18">
+					<!-- Terms -->
 					<div class="p-tn-b-18">
 						<div class="m-tn-b-6">
 							<label class="checkbox">
@@ -127,89 +123,8 @@
 						</div>
 						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">The total time spent doing School Work and the average time per Week and Segment.</div>
 					</div>
-				</div>
-			</div>
 
-
-			<div class="row">
-				<!-- School Work -->
-				<div class="col-lg-1of2 p-lg-r-18">
-					<div class="p-tn-b-18">
-						<div class="m-tn-b-6">
-							<label class="checkbox">
-								<input class="js-checkbox" type="checkbox" name="schoolWorkReportVisible" value="true" checked>
-								<div class="checkbox-icon"></div> 
-								<div class="checkbox-label bold">School Work</div>
-							</label>
-						</div>
-					
-						<div class="p-tn-l-27">
-							<label class="checkbox">
-								<input class="js-checkbox" type="checkbox" name="schoolWorkProgressVisible" value="true" checked>
-								<div class="checkbox-icon"></div> 
-								<div class="checkbox-label">Progress Bar</div>
-							</label>
-						</div>
-						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">Percentage of completed segments.</div>
-					
-						<div class="p-tn-l-27">
-							<label class="checkbox">
-								<input class="js-checkbox" type="checkbox" name="schoolWorkDescriptionVisible" value="true" checked>
-								<div class="checkbox-icon"></div> 
-								<div class="checkbox-label">General Instructions</div>
-							</label>
-						</div>
-						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">The General Instructions for the School Work item.</div>
-					
-						<div class="p-tn-l-27">
-							<label class="checkbox">
-								<input class="js-checkbox" type="checkbox" name="schoolWorkTimesVisible" value="true" checked>
-								<div class="checkbox-icon"></div> 
-								<div class="checkbox-label">Schedule Statistics</div>
-							</label>
-						</div>
-						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">Number of scheduled School Work items, Weeks and Segments.</div>
-					
-						<div class="p-tn-l-27">
-							<label class="checkbox">
-								<input class="js-checkbox" type="checkbox" name="schoolWorkStatsVisible" value="true" checked>
-								<div class="checkbox-icon"></div> 
-								<div class="checkbox-label">Time Statistics</div>
-							</label>
-						</div>
-						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">The total time spent doing School Work and the average time per Week and Segment.</div>
-
-						<div class="p-tn-l-27">
-							<label class="checkbox">
-								<input class="js-checkbox" type="checkbox" name="schoolWorkResourcesVisible" value="true" checked>
-								<div class="checkbox-icon"></div> 
-								<div class="checkbox-label">Attached Resource Titles</div>
-							</label>
-						</div>
-						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">List of Resource titles attached to the School Work item.</div>
-
-						<div class="p-tn-rl-27">
-							<label class="checkbox">
-								<input class="js-checkbox" type="checkbox" name="timesPerWeekReportVisible" value="false">
-								<div class="checkbox-icon"></div> 
-								<div class="checkbox-label bold">Weekly Data</div>
-							</label>
-						</div>
-						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">Notes, Completed checkbox, Segment number, Completion Date, Completion Time and Description for the School Work item.</div>
-					
-						<div class="p-tn-l-54">
-							<label class="checkbox">
-								<input class="js-checkbox" type="checkbox" name="timesPerWeekProgressVisible" value="true" checked>
-								<div class="checkbox-icon"></div> 
-								<div class="checkbox-label">Progress Bar</div>
-							</label>
-						</div>
-						<div class="font-size-12 txt-gray-darkest m-tn-l-54 p-tn-l-27 m-tn-t-neg-9 m-tn-b-18">Percentage of completed segments for the week.</div>
-					</div>
-				</div>
-
-				<!-- Resources -->
-				<div class="col-lg-1of2 p-lg-l-18">
+					<!-- Resources -->
 					<div class="p-tn-b-18">
 						<div class="m-tn-b-6">
 							<label class="checkbox">
@@ -263,6 +178,138 @@
 							</label>
 						</div>
 						<div class="font-size-12 txt-gray-darkest p-tn-l-54 m-tn-t-neg-9 m-tn-b-18">List of School Work the Resource is attached to.</div>
+					</div>
+				</div>
+
+
+
+				<div class="col-lg-1of2 p-lg-l-18">
+					<!-- School Work -->
+					<div class="p-tn-b-18">
+						<div class="m-tn-b-6">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="schoolWorkReportVisible" value="{{report.schoolWorkReportVisible}}" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label bold">School Work</div>
+							</label>
+						</div>
+
+						<!-- Subjects -->
+						<div class="p-tn-rl-27 m-tn-b-6">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="subjectReportVisible" value="true" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label bold">Subjects</div>
+							</label>
+						</div>
+					
+						<div class="p-tn-r-9 p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="subjectProgressVisible" value="true" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Progress Bar</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">Percentage of completed Work items for the Subject.</div>
+					
+						<div class="p-tn-r-9 p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="subjectStatsVisible" value="false">
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Schedule Statistics</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">Number of scheduled Terms, Work items, Weeks and Segments for the Subject.</div>
+					
+						<div class="p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="subjectCompletedVisible" value="false">
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Completed Statistics</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">Number of completed Terms, Weeks, Segments and Days for the Subject.</div>
+					
+						<div class="p-tn-r-9 p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="subjectTimesVisible" value="false">
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Time Statistics</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">The total time spent doing Work and the average time doing Work per Term, Week and Segment for the Subject.</div>
+
+						<!-- Work -->
+						<div class="p-tn-rl-27 m-tn-b-6">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="workReportVisible" value="true" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label bold">Work</div>
+							</label>
+						</div>
+					
+						<div class="p-tn-r-9 p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="schoolWorkProgressVisible" value="true" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Progress Bar</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">Percentage of completed segments.</div>
+					
+						<div class="p-tn-r-9 p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="schoolWorkDescriptionVisible" value="true" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">General Instructions</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">The General Instructions for the Work item.</div>
+					
+						<div class="p-tn-r-9 p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="schoolWorkStatsVisible" value="true" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Schedule Statistics</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">Number of scheduled Work items, Weeks and Segments.</div>
+					
+						<div class="p-tn-r-9 p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="schoolWorkTimesVisible" value="true" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Time Statistics</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">The total time spent doing Work and the average time per Week and Segment.</div>
+
+						<div class="p-tn-r-9 p-tn-l-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="schoolWorkResourcesVisible" value="ture" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Attached Resources</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">List of Resource titles attached to the Work item.</div>
+
+						<div class="p-tn-rl-54">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="timesPerWeekReportVisible" value="false">
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label bold">Weekly Data</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">Notes, Completed checkbox, Segment number, Completion Date, Completion Time and Description for the Work item.</div>
+					
+						<div class="p-tn-r-9 p-tn-l-81">
+							<label class="checkbox">
+								<input class="js-checkbox" type="checkbox" name="timesPerWeekProgressVisible" value="true" checked>
+								<div class="checkbox-icon"></div> 
+								<div class="checkbox-label">Progress Bar</div>
+							</label>
+						</div>
+						<div class="font-size-12 txt-gray-darkest m-tn-l-27 p-tn-l-81 m-tn-t-neg-9 m-tn-b-18">Percentage of completed segments for the week.</div>
 					</div>
 				</div>
 			</div>

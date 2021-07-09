@@ -72,12 +72,18 @@ import '/imports/ui/pages/planning/planningList.js';
 	import '/imports/ui/pages/planning/resources/resourcesEach.js';
 	import '/imports/ui/pages/planning/resources/resourcesView.js';
 	// School Work
-	import '/imports/ui/pages/planning/schoolWork/schoolWorkNew.js';
-	import '/imports/ui/pages/planning/schoolWork/schoolWorkNewList.js';
 	import '/imports/ui/pages/planning/schoolWork/schoolWorkList.js';
-	import '/imports/ui/pages/planning/schoolWork/schoolWorkView.js';
 	import '/imports/ui/pages/planning/schoolWork/schoolWorkEach.js';
-	import '/imports/ui/pages/planning/schoolWork/schoolWorkEdit.js';
+		// Work
+		import '/imports/ui/pages/planning/schoolWork/work/workNew.js';
+		import '/imports/ui/pages/planning/schoolWork/work/workNewList.js';
+		import '/imports/ui/pages/planning/schoolWork/work/workView.js';
+		import '/imports/ui/pages/planning/schoolWork/work/workEdit.js';
+		// Subjects
+		import '/imports/ui/pages/planning/schoolWork/subjects/subjectsNewList.js';
+		import '/imports/ui/pages/planning/schoolWork/subjects/subjectsNew.js';
+		import '/imports/ui/pages/planning/schoolWork/subjects/subjectsView.js';
+		import '/imports/ui/pages/planning/schoolWork/subjects/subjectsEdit.js';
 	// Students
 	import '/imports/ui/pages/planning/students/studentsNew.js';
 	import '/imports/ui/pages/planning/students/studentsList.js';

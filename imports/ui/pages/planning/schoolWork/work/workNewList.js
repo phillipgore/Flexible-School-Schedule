@@ -1,5 +1,5 @@
 import {Template} from 'meteor/templating';
-import './schoolWorkNewList.html';
+import './workNewList.html';
 
 Template.schoolWorkNewList.onCreated( function() {
 	Session.setPersistent('unScrolled', true);

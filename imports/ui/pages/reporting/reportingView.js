@@ -4,6 +4,7 @@ import { Reports } from '../../../api/reports/reports.js';
 import { SchoolYears } from '../../../api/schoolYears/schoolYears.js';
 import { Students } from '../../../api/students/students.js';
 import { Resources } from '../../../api/resources/resources.js';
+import { Subjects } from '../../../api/subjects/subjects.js';
 import { SchoolWork } from '../../../api/schoolWork/schoolWork.js';
 import { Notes } from '../../../api/notes/notes.js';
 import { Terms } from '../../../api/terms/terms.js';

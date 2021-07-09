@@ -20,7 +20,7 @@
 												data-schoolWork-student="{{student._id}}" 
 												data-schoolWork-school-year="{{selectedSchoolYearId}}" 
 												class="js-student dropdown-item-link" 
-												href="/planning/schoolWork/view/{{selectedFramePosition}}/{{student._id}}/{{selectedSchoolYearId}}/{{firstSchoolWorkId student._id selectedSchoolYearId}}"
+												href="/planning/{{firstSchoolWorkType student._id selectedSchoolYearId}}/view/{{selectedFramePosition}}/{{student._id}}/{{selectedSchoolYearId}}/{{firstSchoolWorkId student._id selectedSchoolYearId}}"
 											>
 												<div class="dropdown-item-label">{{student.preferredFirstName.name}} {{student.lastName}}</div>
 												{{#if activeListItem selectedStudent._id student._id}}
@@ -55,7 +55,7 @@
 								{{else}}
 									{{#each schoolYear in schoolYears}}
 										<li class="dropdown-item">
-											<a id="{{schoolYear._id}}" data-schoolWork-student="{{selectedStudentId}}" data-schoolWork-school-year="{{schoolYear._id}}" class="js-school-year dropdown-item-link" href="/planning/schoolWork/view/{{selectedFramePosition}}/{{selectedStudentId}}/{{schoolYear._id}}/{{firstSchoolWorkId selectedStudentId schoolYear._id}}">
+											<a id="{{schoolYear._id}}" data-schoolWork-student="{{selectedStudentId}}" data-schoolWork-school-year="{{schoolYear._id}}" class="js-school-year dropdown-item-link" href="/planning/{{firstSchoolWorkType selectedStudentId schoolYear._id}}/view/{{selectedFramePosition}}/{{selectedStudentId}}/{{schoolYear._id}}/{{firstSchoolWorkId selectedStudentId schoolYear._id}}">
 												<div class="dropdown-item-label">{{schoolYear.startYear}}-{{schoolYear.endYear}}</div>
 												{{#if activeListItem selectedSchoolYearId schoolYear._id}}
 													<div class="dropdown-item-icon-right">

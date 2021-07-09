@@ -44,6 +44,11 @@ const PathsSchema = new SimpleSchema({
 		label: "First School Work ID",
         optional: true,
 	},
+	firstSchoolWorkType: {
+		type: String,
+		label: "First School Work Type",
+        optional: true,
+	},
 	
 	groupId: {
 		type: String,

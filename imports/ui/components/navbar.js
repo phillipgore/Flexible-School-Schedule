@@ -29,7 +29,7 @@ Template.navbar.helpers({
 			return '/planning/resources/view/1/' + Session.get('selectedResourceType') +'/'+ Session.get('selectedResourceAvailability') +'/'+ Session.get('selectedResourceId') +'/'+ Session.get('selectedResourceCurrentTypeId');
 		}
 		if (Session.get('planningPathName') === 'schoolWork') {
-			return '/planning/schoolWork/view/1/' + Session.get('selectedStudentId') +'/'+ Session.get('selectedSchoolYearId') +'/'+ Session.get('selectedSchoolWorkId');
+			return '/planning/' + Session.get('selectedSchoolWorkType') + '/view/1/' + Session.get('selectedStudentId') +'/'+ Session.get('selectedSchoolYearId') +'/'+ Session.get('selectedSchoolWorkId');
 		}
 	},
 

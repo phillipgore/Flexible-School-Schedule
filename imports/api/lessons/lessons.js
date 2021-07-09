@@ -84,6 +84,11 @@ const LessonsSchema = new SimpleSchema({
         type: String,
         label: "Student ID"
     },
+    subjectId: {
+        type: String,
+        label: "Subject ID",
+        optional: true
+    },
 	groupId: {
 		type: String,
 		label: "Group ID",

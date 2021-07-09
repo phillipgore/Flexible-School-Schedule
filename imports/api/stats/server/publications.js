@@ -1,13 +1,11 @@
-import {Groups} from '../../groups/groups.js';
 import {Counts} from 'meteor/tmeasday:publish-counts';
 import {Stats} from '../../stats/stats.js';
 import {Students} from '../../students/students.js';
 import {SchoolYears} from '../../schoolYears/schoolYears.js';
 import {Resources} from '../../resources/resources.js';
+import {Subjects} from '../../subjects/subjects.js';
 import {SchoolWork} from '../../schoolWork/schoolWork.js';
-import {Weeks} from '../../weeks/weeks.js';
 import {Lessons} from '../../lessons/lessons.js';
-import {Reports} from '../../reports/reports.js';
 
 import _ from 'lodash';
 
@@ -82,5 +80,6 @@ Meteor.publish('testDataStats', function() {
 	Counts.publish(this, 'schoolYearCount', SchoolYears.find({groupId: groupId}));
 	Counts.publish(this, 'resourceCount', Resources.find({groupId: groupId}));
 	Counts.publish(this, 'schoolWorkCount', SchoolWork.find({groupId: groupId}));
+	Counts.publish(this, 'subjectCount', Subjects.find({groupId: groupId}));
 	Counts.publish(this, 'lessonCount', Lessons.find({groupId: groupId}));
 });

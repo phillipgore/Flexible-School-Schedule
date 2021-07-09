@@ -25,7 +25,7 @@ Template.resourcesForm.onRendered( function() {
 	
 	let template = Template.instance();
 		
-	if (FlowRouter.getRouteName() === 'resourcesNew' || FlowRouter.getRouteName() === 'schoolWorkNew' || FlowRouter.getRouteName() === 'schoolWorkEdit') {
+	if (FlowRouter.getRouteName() === 'resourcesNew' || FlowRouter.getRouteName() === 'workNew' || FlowRouter.getRouteName() === 'workEdit') {
 		Session.set({
 			toolbarType: 'new',
 			labelThree: 'New ' + _.capitalize(FlowRouter.getParam('selectedResourceNewType')) + ' Resource',
@@ -115,7 +115,7 @@ Template.resourcesForm.onRendered( function() {
 				resourceProperties.availability = template.find("[name='availability']:checked").value.trim();
 			}
 
-			if (FlowRouter.getRouteName() === 'resourcesNew' || FlowRouter.getRouteName() === 'schoolWorkNew' || FlowRouter.getRouteName() === 'schoolWorkEdit') {
+			if (FlowRouter.getRouteName() === 'resourcesNew' || FlowRouter.getRouteName() === 'workNew' || FlowRouter.getRouteName() === 'workEdit') {
 				Meteor.call('insertResource', resourceProperties, function(error, resourceId) {
 					if (error) {
 						Alerts.insert({
@@ -131,7 +131,7 @@ Template.resourcesForm.onRendered( function() {
 						if (FlowRouter.getRouteName() === 'resourcesNew') {
 							FlowRouter.go('/planning/resources/view/3/all/all/' + resourceId +'/' + Session.get('currentType'));
 						}
-						if (FlowRouter.getRouteName() === 'schoolWorkNew' || FlowRouter.getRouteName() === 'schoolWorkEdit') {
+						if (FlowRouter.getRouteName() === 'workNew' || FlowRouter.getRouteName() === 'workEdit') {
 							LocalResources.insert({id: resourceId, type: resourceProperties.type, title: resourceProperties.title});
 							document.getElementsByClassName('js-form-new-resource')[0].reset();
 							document.getElementsByClassName('js-form-new-resource')[0].getElementsByClassName('editor-content')[0].innerHTML = '';
@@ -172,7 +172,7 @@ Template.resourcesForm.onRendered( function() {
 
 Template.resourcesForm.helpers({
 	isNewResource: function() {
-		if (FlowRouter.getRouteName() === 'resourcesNew' || FlowRouter.getRouteName() === 'schoolWorkNew' || FlowRouter.getRouteName() === 'schoolWorkEdit') {
+		if (FlowRouter.getRouteName() === 'resourcesNew' || FlowRouter.getRouteName() === 'workNew' || FlowRouter.getRouteName() === 'workEdit') {
 			return true;
 		}
 		return false;
@@ -192,14 +192,14 @@ Template.resourcesForm.helpers({
 		if (availability === 'own' && FlowRouter.getRouteName() === 'resourcesNew') {
 			return true;
 		}
-		if (availability === 'own' && FlowRouter.getRouteName() === 'schoolWorkNew' || availability === 'own' && FlowRouter.getRouteName() === 'schoolWorkEdit') {
+		if (availability === 'own' && FlowRouter.getRouteName() === 'workNew' || availability === 'own' && FlowRouter.getRouteName() === 'workEdit') {
 			return true;
 		}
 		return false;
 	},
 
 	resourceFormType: function() {
-		if (FlowRouter.getRouteName() === 'resourcesNew' || FlowRouter.getRouteName() === 'schoolWorkNew' || FlowRouter.getRouteName() === 'schoolWorkEdit') {
+		if (FlowRouter.getRouteName() === 'resourcesNew' || FlowRouter.getRouteName() === 'workNew' || FlowRouter.getRouteName() === 'workEdit') {
 			return Session.get('selectedResourceNewType');
 		}
 

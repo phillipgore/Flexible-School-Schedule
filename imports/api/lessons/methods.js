@@ -1,9 +1,5 @@
-import {Mongo} from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-
 import {Lessons} from './lessons.js';
 import {Notes} from '../notes/notes.js';
-import {Stats} from '../stats/stats.js';
 import {upsertPaths} from '../../modules/server/paths';
 import {upsertStats} from '../../modules/server/stats';
 import {primaryInitialIds} from '../../modules/server/initialIds';

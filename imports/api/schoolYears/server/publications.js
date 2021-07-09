@@ -1,13 +1,18 @@
 import {SchoolYears} from '../schoolYears.js';
 import {Stats} from '../../stats/stats.js';
-import {Students} from '../../students/students.js';
 import {Terms} from '../../terms/terms.js';
 import {Weeks} from '../../weeks/weeks.js';
-import {SchoolWork} from '../../schoolWork/schoolWork.js';
-import {Resources} from '../../resources/resources.js';
-import {Lessons} from '../../lessons/lessons.js';
 
 import _ from 'lodash'
+
+Meteor.publish('schoolYear', function(schoolYearId) {
+	if (!this.userId) {
+		return this.ready();
+	}
+
+	let groupId = Meteor.users.findOne({_id: this.userId}).info.groupId;
+	return SchoolYears.find({groupId: groupId, _id: schoolYearId}, {fields: {startYear: 1, endYear: 1}});
+});
 
 Meteor.publish('allSchoolYears', function() {
 	if (!this.userId) {

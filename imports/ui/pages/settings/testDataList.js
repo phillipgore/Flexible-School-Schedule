@@ -18,7 +18,11 @@ Template.testDataList.onCreated( function() {
 
 Template.testDataList.helpers({
 	totalDataCount: function() {
-		return Counts.get('studentCount') + Counts.get('schoolYearCount') + Counts.get('resourceCount') + Counts.get('schoolWorkCount') + Counts.get('lessonCount');
+		return Counts.get('studentCount') + Counts.get('schoolYearCount') + Counts.get('resourceCount') + Counts.get('schoolWorkCount') + Counts.get('subjectCount') + Counts.get('lessonCount');
+	},
+
+	schoolWorkCount: function() {
+		return Counts.get('schoolWorkCount') + Counts.get('subjectCount');
 	},
 
 	studentDataCreating: function() {
@@ -195,6 +199,7 @@ Template.testDataList.events({
 						});
 					} else {
 						Session.set('selectedSchoolWorkId', result.schoolWorkId);
+						Session.set('selectedSchoolWorkType', result.schoolWorkType);
 						template.schoolWorkDataCreating.set(false);
 					}
 				});
@@ -262,7 +267,7 @@ Template.testDataList.events({
 		let studentCount = Counts.get('studentCount');
 		let schoolYearCount = Counts.get('schoolYearCount');
 		let resourceCount = Counts.get('resourceCount');
-		let schoolWorkCount = Counts.get('schoolWorkCount');
+		let schoolWorkCount = Counts.get('subjectCount') + Counts.get('schoolWorkCount');
 		let lessonCount = Counts.get('lessonCount');
 
 		if (dataRemoving || studentDataCreating || schoolYearDataCreating || resourceDataCreating || schoolWorkDataCreating || lessonDataCreating) {return false;}
@@ -291,6 +296,7 @@ Template.testDataList.events({
 					Session.set('selectedResourceId', result.resourceId);
 					Session.set('selectedResourceCurrentTypeId', result.resourceType);
 					Session.set('selectedSchoolWorkId', result.schoolWorkId);
+					Session.set('selectedSchoolWorkType', result.schoolWorkType);
 					template.dataRemoving.set(false);
 				}
 			});

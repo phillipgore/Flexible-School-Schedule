@@ -78,6 +78,10 @@ import '../../api/resources/resources.js';
 import '../../api/resources/methods.js';
 import '../../api/resources/server/publications.js';
 
+import '../../api/subjects/subjects.js';
+import '../../api/subjects/methods.js';
+import '../../api/subjects/server/publications.js';
+
 import '../../api/schoolWork/schoolWork.js';
 import '../../api/schoolWork/methods.js';
 import '../../api/schoolWork/server/publications.js';

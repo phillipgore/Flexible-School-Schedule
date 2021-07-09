@@ -12,8 +12,6 @@ SyncedCron.add({
 		return parser.text('every 12 hours');
 	},
 	job: function() {
-		console.log('cron job')
-
 		let today = moment()
 		let todayUnix = moment().unix();
 		let price = parseInt(Meteor.settings.public.stripePlanPrice);

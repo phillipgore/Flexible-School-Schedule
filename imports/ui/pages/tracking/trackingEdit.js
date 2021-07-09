@@ -1,6 +1,7 @@
 import {Template} from 'meteor/templating';
 import { Students } from '../../../api/students/students.js';
 import { SchoolYears } from '../../../api/schoolYears/schoolYears.js';
+import { Subjects } from '../../../api/subjects/subjects.js';
 import { SchoolWork } from '../../../api/schoolWork/schoolWork.js';
 import { Terms } from '../../../api/terms/terms.js';
 import { Weeks } from '../../../api/weeks/weeks.js';
@@ -76,14 +77,10 @@ Template.trackingEdit.helpers({
 		return false;
 	},
 
-	schoolWorkOne: function() {
-		let schoolWorkLimit = Math.ceil(SchoolWork.find({studentId: FlowRouter.getParam('selectedStudentId'), schoolYearId: FlowRouter.getParam('selectedSchoolYearId')}).count() / 2);
-		return SchoolWork.find({studentId: FlowRouter.getParam('selectedStudentId'), schoolYearId: FlowRouter.getParam('selectedSchoolYearId')}, {sort: {name: 1}, limit: schoolWorkLimit});
-	},
-
-	schoolWorkTwo: function() {
-		let schoolWorkSkip = Math.ceil(SchoolWork.find({studentId: FlowRouter.getParam('selectedStudentId'), schoolYearId: FlowRouter.getParam('selectedSchoolYearId')}).count() / 2);
-		return SchoolWork.find({studentId: FlowRouter.getParam('selectedStudentId'), schoolYearId: FlowRouter.getParam('selectedSchoolYearId')}, {sort: {name: 1}, skip: schoolWorkSkip});
+	schoolWork: function() {
+		if (Template.instance().trackingEditData.ready()) {
+			return getMiddleSchoolWork(FlowRouter.getParam('selectedStudentId'), FlowRouter.getParam('selectedSchoolYearId'));
+		}
 	},
 
 	studentName(first, last) {
@@ -330,7 +327,7 @@ Template.trackingEdit.events({
 		let batchUncheckedLessonProperties = [];
 
 		schoolWorkIds.forEach(workId => {
-			$('#js-schoolWork-track-' + workId).find('.js-segment-checkbox').each(function() {
+			$('#js-work-track-' + workId).find('.js-segment-checkbox').each(function() {
 				if ($(this).val().trim() != 'true') {
 					let weekDay = parseInt($(this).attr('data-weekDay')) || 0;
 					batchUncheckedLessonProperties.push({ 
@@ -348,7 +345,6 @@ Template.trackingEdit.events({
 
 		// No Choice ----------------------------------------------------------------------
 		if (action === 'choose') {
-			// console.log('choose');
 
 			Alerts.insert({
 				colorClass: 'bg-info',
@@ -361,7 +357,6 @@ Template.trackingEdit.events({
 
 		// Labels ----------------------------------------------------------------------
 		if (action === 'labels') {
-			// console.log('labels');
 			
 			$('.js-updating').show();
 			$('.js-submit').prop('disabled', true);
@@ -401,7 +396,6 @@ Template.trackingEdit.events({
 
 			// Insert ----------------------------------------------------------------------
 			if (action === 'insert') {
-				// console.log('insert');
 
 				$('.js-updating').show();
 				$('.js-submit').prop('disabled', true);
@@ -484,7 +478,6 @@ Template.trackingEdit.events({
 						} 
 					});
 				});
-				console.log(bulkUpdateLessonProperties);
 
 				Meteor.call('bulkInsertLessons', bulkInsertLessonProperties, bulkUpdateLessonProperties, function(error, result) {
 					if (error) {
@@ -512,7 +505,6 @@ Template.trackingEdit.events({
 
 			// Complete ----------------------------------------------------------------------
 			if (action === 'complete') {
-				// console.log('complete');
 
 				$('.js-updating').show();
 				$('.js-submit').prop('disabled', true);
@@ -525,7 +517,6 @@ Template.trackingEdit.events({
 
 			// Incomplete ----------------------------------------------------------------------
 			if (action === 'incomplete') {
-				// console.log('incomplete');
 
 				$('.js-updating').show();
 				$('.js-submit').prop('disabled', true);
@@ -538,7 +529,6 @@ Template.trackingEdit.events({
 
 			// Assigned ----------------------------------------------------------------------
 			if (action === 'assigned') {
-				// console.log('assigned');
 
 				$('.js-updating').show();
 				$('.js-submit').prop('disabled', true);
@@ -551,7 +541,6 @@ Template.trackingEdit.events({
 
 			// Unassigned ----------------------------------------------------------------------
 			if (action === 'unassigned') {
-				// console.log('unassigned');
 
 				$('.js-updating').show();
 				$('.js-submit').prop('disabled', true);
@@ -564,7 +553,6 @@ Template.trackingEdit.events({
 
 			// Existing Week ----------------------------------------------------------------------
 			if (action === 'existing') {
-				// console.log('existing');
 
 				$('.js-updating').show();
 				$('.js-submit').prop('disabled', true);
@@ -612,9 +600,9 @@ Template.trackingEdit.events({
 							if (lessonStat.lessonCount >= 8) {
 								error.push('error');
 
-								$('#js-schoolWork-track-' + lessonStat.schoolWorkId).find('.track-icon i').addClass('txt-danger-dark');
-								$('#js-schoolWork-track-' + lessonStat.schoolWorkId).find('.track-label').addClass('txt-danger-dark');
-								$('#js-schoolWork-track-' + lessonStat.schoolWorkId).find('.error').text(`School Work can only have 7 segments per week. This change would make ${lessonStat.lessonCount} segments for this item of School Work in the newly selected week.`);
+								$('#js-work-track-' + lessonStat.schoolWorkId).find('.track-icon i').addClass('txt-danger-dark');
+								$('#js-work-track-' + lessonStat.schoolWorkId).find('.track-label').addClass('txt-danger-dark');
+								$('#js-work-track-' + lessonStat.schoolWorkId).find('.error').text(`School Work can only have 7 segments per week. This change would make ${lessonStat.lessonCount} segments for this item of School Work in the newly selected week.`);
 							}
 						})
 
@@ -678,7 +666,6 @@ Template.trackingEdit.events({
 
 			// New Week ----------------------------------------------------------------------
 			if (action === 'new') {
-				// console.log('new');
 
 				$('.js-updating').show();
 				$('.js-submit').prop('disabled', true);
@@ -826,6 +813,105 @@ Template.trackingEdit.events({
 		});
 	},
 });
+
+let getMiddleSchoolWork = (studentId, schoolYearId) => {
+	let schoolWork = [];
+
+	// Subjects and Work
+	Subjects.find({schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId')}, {sort: {name: 1}}).forEach(subject => {
+		let subjectSchoolWork = SchoolWork.find({subjectId: subject._id}, {sort: {name: 1}});
+		subject.type = 'subject';
+		subject.hasSchoolWork = subjectSchoolWork.count() === 0 ? false : true;
+		schoolWork.push(subject);
+		subjectSchoolWork.forEach(workItem => {
+			workItem.type = 'work'
+			schoolWork.push(workItem);
+		})
+	});
+
+	// No Subject and Work
+	let noSubjectSchoolWork = SchoolWork.find({schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId'), subjectId: {$exists: false}}, {sort: {name: 1}});
+	schoolWork.push({
+		_id: 'noSubject',
+		name: 'No Subject',
+		type: 'subject',
+		hasSchoolWork: noSubjectSchoolWork.count() === 0 ? false : true,
+	});
+	noSubjectSchoolWork.forEach(workItem => {
+		workItem.type = 'work';
+		workItem.subjectId = 'noSubject';
+		schoolWork.push(workItem);
+	});
+
+	// Middle SchoolWork Item
+	let middleSchoolWork = schoolWork[Math.ceil(schoolWork.length / 2)];
+	let dividingSchoolwork;
+	
+	// Dividing SchoolWork Item
+	if (middleSchoolWork.type === 'subject') {
+		dividingSchoolwork = {
+			_id: middleSchoolWork._id,
+			type: middleSchoolWork.type,
+		}
+	} 
+	if (middleSchoolWork.type === 'work') {
+		let getSubjectSchoolWork = (middleSchoolWork) => {
+			if (middleSchoolWork.subjectId === 'noSubject') {
+				return SchoolWork.find({subjectId: {$exists: false}}, {sort: {name: 1}}).fetch()
+			}
+			return SchoolWork.find({subjectId: middleSchoolWork.subjectId}, {sort: {name: 1}}).fetch()
+		}
+
+		let subjectSchoolWork = getSubjectSchoolWork(middleSchoolWork);
+		let schoolWorkCount = subjectSchoolWork.length;
+		let middleSchoolWorkPositiion = subjectSchoolWork.findIndex(work => work._id === middleSchoolWork._id);
+
+		if (schoolWorkCount > 4 || middleSchoolWorkPositiion >= (Math.floor(schoolWorkCount / 2))) {
+			dividingSchoolwork = {
+				_id: middleSchoolWork._id,
+				type: middleSchoolWork.type,
+				subjectId: middleSchoolWork.subjectId,
+			}
+		} else {
+			let divdingSchoolWorkPosition = schoolWork.findIndex(work => work._id === middleSchoolWork._id);
+			let newDividingSchoolwork = schoolWork.find((work, index) => work.type === 'subject' && index > divdingSchoolWorkPosition)
+			if (newDividingSchoolwork) {
+				dividingSchoolwork = {
+					_id: newDividingSchoolwork._id,
+					type: 'subject',
+				}
+			} else {
+				dividingSchoolwork = {
+					_id: middleSchoolWork.subjectId,
+					type: 'subject',
+				}
+			}
+		}
+	}
+
+	// Position Information
+	schoolWork.forEach((work, index) => {
+		let prevWork = schoolWork[index - 1];
+		if (prevWork && prevWork.type === 'work') {
+			work.precededByWork = true;
+		} else if (prevWork && prevWork.type === 'subject') {
+			work.precededBySubject = true;
+		} else {
+			work.precededBySubject = false;
+			work.precededByWork = false;
+		}
+	})
+
+	// Creating the Columns
+	let dividingSchoolworkIndex = schoolWork.findIndex(work => {
+		return work._id === dividingSchoolwork._id;
+	});
+
+	return {
+		columnOne: schoolWork.slice(0, dividingSchoolworkIndex),
+		columnTwo: schoolWork.slice(dividingSchoolworkIndex)
+	}
+};
 
 
 

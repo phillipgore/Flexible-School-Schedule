@@ -1,0 +1,23 @@
+<template name="subjectsEdit">
+	{{#unless Template.subscriptionsReady}}
+		{{> loading}}
+	{{/unless}}
+	{{> saving}}
+	<main class="app-content app-content-preceeds-toolbar app-content-form pos-relative">
+		<form class="js-form-subjects-update row">
+			
+			<label id="studentId-error" class="student-error hide" for="studentId">At least one student must be checked.</label>
+			<div class="well bg-gray-lighter m-tn-b-18 p-tn-b-3">
+				<label>Subject Name</label>
+				<input type="text" name="name" id="name" placeholder="History" autocomplete="off" value="{{subject.name}}">
+				<label class="error name-errors"></label>
+			</div>
+
+			<footer class="toolbar toolbar-bottom toolbar-gray">
+				<a href="#" class="js-cancel btn btn-gray-darker fl-tn-left">Cancel</a>
+				<button type="submit" class="js-submit fl-tn-right">Update</button>
+			</footer>
+
+		</form>
+	</main>
+</template>

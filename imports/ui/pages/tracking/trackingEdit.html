@@ -165,12 +165,12 @@
 							{{/unless}}
 						</div>
 					{{/if}}
-					<div class="row m-tn-t-neg-12 m-lg-t-0">
-						<div class="col-lg-1of2 m-lg-t-neg-12">
-							{{> trackingEditSchoolWork schoolWork=schoolWorkOne}}
+					<div class="row">
+						<div class="col-lg-1of2">
+							{{> trackingEditSchoolWork schoolWork=schoolWork.columnOne}}
 						</div>
-						<div class="col-lg-1of2 m-lg-t-neg-12">
-							{{> trackingEditSchoolWork schoolWork=schoolWorkTwo}}
+						<div class="col-lg-1of2">
+							{{> trackingEditSchoolWork schoolWork=schoolWork.columnTwo}}
 						</div>
 					</div>
 				{{else}}

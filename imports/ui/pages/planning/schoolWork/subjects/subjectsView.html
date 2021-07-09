@@ -1,0 +1,19 @@
+<template name="subjectsView">
+	{{> deleting}}
+	{{#unless subscriptionReady}}
+		{{> loading}}
+    {{/unless}}
+
+	<main class="app-content app-content-preceeds-toolbar app-content-data">
+        {{#if subject}}
+			<div class="view-heading m-tn-b-21">
+				<div class="view-icon">
+					<i class="icn-subjects"></i>
+				</div>
+				<div class="view-title">
+					<h1 class="m-tn-b-3">{{subject.name}}</h1>
+				</div>
+			</div>
+		{{/if}}
+    </main>
+</template>

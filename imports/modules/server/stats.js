@@ -22,7 +22,6 @@ import _ from 'lodash';
 
 // Upsert Stats
 export function upsertStats(statProperties, submittedGroupId) {
-	// console.log('upsertStats start');
 	let groupId = getGroupId(submittedGroupId);
 
 	let studentIds = getStudents(groupId, statProperties);
@@ -51,7 +50,6 @@ export function upsertStats(statProperties, submittedGroupId) {
 		});
 	}
 
-	// console.log('upsertStats end');
 	return true;
 }
 

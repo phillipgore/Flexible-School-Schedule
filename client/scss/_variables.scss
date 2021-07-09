@@ -2,6 +2,9 @@ $font-family-default: "Helvetica Neue-Light", "Helvetica Neue Light", "Helvetica
 $font-weight-default: 400;
 $font-size-default: 16px;
 
+$color-primary-darkest: darken(#7CB27C, 35%);
+$color-primary-darker: darken(#7CB27C, 20%);
+$color-primary-dark: darken(#7CB27C, 15%);
 $color-primary: #7CB27C;
 $color-primary-light: #ABCCAB;
 $color-primary-lighter: #CBE0CB;

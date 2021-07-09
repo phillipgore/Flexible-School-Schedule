@@ -1,7 +1,4 @@
 import {Weeks} from '../weeks.js';
-import {SchoolYears} from '../../schoolYears/schoolYears.js';
-import {Terms} from '../../terms/terms.js';
-import {Lessons} from '../../lessons/lessons.js';
 
 import _ from 'lodash'
 
@@ -20,7 +17,7 @@ Meteor.publish('schoolYearWeeks', function(schoolYearId) {
 	}
 
 	let groupId = Meteor.users.findOne({_id: this.userId}).info.groupId;
-	return Weeks.find({schoolYearId: schoolYearId, groupId: groupId}, {fields: {_id: 1}});
+	return Weeks.find({schoolYearId: schoolYearId, groupId: groupId}, {fields: {order: 1, termId: 1, schoolYearId: 1}});
 });
 
 Meteor.publish('termWeeks', function(termId) {

@@ -1,14 +1,14 @@
 import {Template} from 'meteor/templating';
-import { SchoolWork } from '../../../../api/schoolWork/schoolWork.js';
-import { Students } from '../../../../api/students/students.js';
-import { Resources } from '../../../../api/resources/resources.js';
-import { SchoolYears } from '../../../../api/schoolYears/schoolYears.js';
-import { Terms } from '../../../../api/terms/terms.js';
-import { Weeks } from '../../../../api/weeks/weeks.js';
-import { Lessons } from '../../../../api/lessons/lessons.js';
-import './schoolWorkView.html';
+import { SchoolWork } from '../../../../../api/schoolWork/schoolWork.js';
+import { Students } from '../../../../../api/students/students.js';
+import { Resources } from '../../../../../api/resources/resources.js';
+import { SchoolYears } from '../../../../../api/schoolYears/schoolYears.js';
+import { Terms } from '../../../../../api/terms/terms.js';
+import { Weeks } from '../../../../../api/weeks/weeks.js';
+import { Lessons } from '../../../../../api/lessons/lessons.js';
+import './workView.html';
 
-Template.schoolWorkView.onCreated( function() {	
+Template.workView.onCreated( function() {	
 	let template = Template.instance();
 	
 	template.autorun(() => {
@@ -16,16 +16,16 @@ Template.schoolWorkView.onCreated( function() {
 	});
 });
 
-Template.schoolWorkView.onRendered( function() {
+Template.workView.onRendered( function() {
 	Session.set({
 		toolbarType: 'schoolWork',
-		editUrl: '/planning/schoolWork/edit/3/' + FlowRouter.getParam('selectedStudentId') +'/'+ FlowRouter.getParam('selectedSchoolYearId') +'/'+ FlowRouter.getParam('selectedSchoolWorkId'),
+		editUrl: '/planning/work/edit/3/' + FlowRouter.getParam('selectedStudentId') +'/'+ FlowRouter.getParam('selectedSchoolYearId') +'/'+ FlowRouter.getParam('selectedSchoolWorkId'),
 		labelThree: 'School Work',
 		activeNav: 'planningList',
 	});
 });
 
-Template.schoolWorkView.helpers({
+Template.workView.helpers({
 	subscriptionReady: function() {
 		return Template.instance().schoolWorkData.ready();
 	},
@@ -59,7 +59,7 @@ Template.schoolWorkView.helpers({
 	}
 });
 
-Template.schoolWorkView.events({
+Template.workView.events({
 	
 });
 

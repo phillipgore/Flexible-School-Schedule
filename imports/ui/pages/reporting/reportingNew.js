@@ -50,6 +50,14 @@ Template.reportingNew.onRendered( function() {
 				termsTimesVisible: template.find("[name='termsTimesVisible']").value.trim() === 'true',
 				
 				schoolWorkReportVisible: template.find("[name='schoolWorkReportVisible']").value.trim() === 'true',
+
+				subjectReportVisible: template.find("[name='subjectReportVisible']").value.trim() === 'true',
+				subjectStatsVisible: template.find("[name='subjectStatsVisible']").value.trim() === 'true',
+				subjectProgressVisible: template.find("[name='subjectProgressVisible']").value.trim() === 'true',
+				subjectCompletedVisible: template.find("[name='subjectCompletedVisible']").value.trim() === 'true',
+				subjectTimesVisible: template.find("[name='subjectTimesVisible']").value.trim() === 'true',
+
+				workReportVisible: template.find("[name='workReportVisible']").value.trim() === 'true',
 				schoolWorkStatsVisible: template.find("[name='schoolWorkStatsVisible']").value.trim() === 'true',
 				schoolWorkProgressVisible: template.find("[name='schoolWorkProgressVisible']").value.trim() === 'true',
 				schoolWorkTimesVisible: template.find("[name='schoolWorkTimesVisible']").value.trim() === 'true',

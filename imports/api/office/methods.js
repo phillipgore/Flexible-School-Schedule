@@ -1,6 +1,3 @@
-import {Mongo} from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-
 import {Groups} from '../groups/groups.js';
 import {Students} from '../students/students.js';
 import {SchoolYears} from '../schoolYears/schoolYears.js';

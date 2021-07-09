@@ -63,15 +63,40 @@
 
 						{{#if newable}}
 							<!-- New Button -->
-							<a class="btn-tool dis-sm-none {{#if schoolWorkDisabled}}disabled{{/if}}" href="{{newUrl}}" title="{{#if schoolWorkDisabled}}School Work require Students and School Years.{{else}}New Student, School Year, School Work or User{{/if}}">
+							<a class="btn-tool dis-sm-none {{#if schoolWorkDisabled}}disabled{{/if}}" href="{{newUrl}}" title="{{#if schoolWorkDisabled}}Work requires Students and School Years.{{else}}New Student, School Year, Subject, Work or User{{/if}}">
 								<i class="icn-new btn-tool-icon"></i>
 							</a>
+						{{/if}}
+
+						{{#if schoolWorkNewable}}
+							<!-- New Dropdown Button -->
+							<div class="btn-tool-dropdown dis-sm-none">
+								<a class="js-dropdown btn-tool" href="#" data-menu="#newSchoolWork" title="New Subject or Work">
+									<i class="icn-new btn-tool-icon dis-sm-none"></i>
+									<i class="icn-new btn-tool-icon dis-tn-none dis-sm-inline-block"></i>
+								</a>
+								<ul id="newSchoolWork" class="dropdown-menu dropdown-tool border-none txt-tn-left m-tn-rl-9 hide">
+									<li class="dropdown-item">
+										<a class="dropdown-item-link" href="/planning/subjects/new/3/{{selectedStudentId}}/{{selectedSchoolYearId}}" title="{{#if schoolWorkDisabled}}Subjects require Students and School Years.{{/if}}">
+											<i class="icn-subjects icn-fw-16 m-tn-r-4"></i> New Subject
+										</a>
+									</li>
+									<li class="dropdown-item">
+										<a class="js-new-schoolWork dropdown-item-link {{#if schoolWorkDisabled}}disabled{{/if}}" 
+											href="/planning/work/new/3/{{selectedStudentId}}/{{selectedSchoolYearId}}"
+											title="{{#if schoolWorkDisabled}}Work requires Students and School Years.{{/if}}"
+										>
+											<i class="icn-school-work icn-fw-16 m-tn-r-4"></i> New Work
+										</a>
+									</li>
+								</ul>
+							</div>
 						{{/if}}
 
 						{{#if resourceNewable}}
 							<!-- New Dropdown Button -->
 							<div class="btn-tool-dropdown dis-sm-none">
-								<a class="js-dropdown btn-tool" href="#" data-menu="#newResource" title="New Student, School Year, School Work or User">
+								<a class="js-dropdown btn-tool" href="#" data-menu="#newResource" title="New Resource">
 									<i class="icn-new btn-tool-icon dis-sm-none"></i>
 									<i class="icn-new btn-tool-icon dis-tn-none dis-sm-inline-block"></i>
 								</a>
@@ -135,7 +160,7 @@
 
 						<!-- New Dropdown Button -->
 						<div class="btn-tool-dropdown dis-tn-none dis-sm-inline-block">
-							<a class="js-dropdown btn-tool" href="#" data-menu="#newPlanning" title="New Student, School Year, School Work or User">
+							<a class="js-dropdown btn-tool" href="#" data-menu="#newPlanning" title="New Student, School Year, Subject, Work or User">
 								<i class="icn-new dis-sm-none"></i>
 								<div class="btn-tool-icon dis-tn-none dis-sm-block"><i class="icn-new-circle"></i> <i class="icn-caret-down"></i></div>
 								<div class="btn-tool-label dis-tn-none dis-sm-block">Insert</div>
@@ -153,11 +178,16 @@
 									</a>
 								</li>
 								<li class="dropdown-item">
+									<a class="dropdown-item-link" href="/planning/subjects/new/3/{{selectedStudentId}}/{{selectedSchoolYearId}}" title="{{#if schoolWorkDisabled}}Subjects require Students and School Years.{{/if}}">
+										<i class="icn-subjects icn-fw-16 m-tn-r-4"></i> New Subject
+									</a>
+								</li>
+								<li class="dropdown-item">
 									<a class="js-new-schoolWork dropdown-item-link {{#if schoolWorkDisabled}}disabled{{/if}}" 
-										href="/planning/schoolWork/new/3/{{selectedStudentId}}/{{selectedSchoolYearId}}"
-										title="{{#if schoolWorkDisabled}}School Work require Students and School Years.{{/if}}"
+										href="/planning/work/new/3/{{selectedStudentId}}/{{selectedSchoolYearId}}"
+										title="{{#if schoolWorkDisabled}}Work requires Students and School Years.{{/if}}"
 									>
-										<i class="icn-school-work icn-fw-16 m-tn-r-4"></i> New School Work
+										<i class="icn-school-work icn-fw-16 m-tn-r-4"></i> New Work
 									</a>
 								</li>
 

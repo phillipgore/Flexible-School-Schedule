@@ -1,6 +1,3 @@
-import {Mongo} from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-
 import {SchoolYears} from './schoolYears.js';
 import {Paths} from '../../api/paths/paths.js';
 import {Stats} from '../../api/stats/stats.js';

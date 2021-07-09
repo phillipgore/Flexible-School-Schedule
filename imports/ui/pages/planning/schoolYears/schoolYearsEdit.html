@@ -32,9 +32,13 @@
 					{{#each term in terms}}
 						<li id="{{term._id}}" data-term-index="{{@index}}" class="js-term-item js-term-toggle list-item no-last-border bottom-border-gray-light p-tn-l-9">
 							<span class="list-item-inner">
-								<div class="list-item-icon"><i class="{{getStatus term._id}}"></i></div> 
+								<div class="list-item-caret">
+									<i class="js-caret-right icn-caret-right txt-gray-darkest"></i>
+									<i class="js-caret-down icn-caret-down txt-gray-darkest hide"></i>
+								</div>
+								<div class="list-item-icon p-tn-t-2"><i class="{{getStatus term._id}}"></i></div> 
 								<div class="list-item-label font-weight-500 cursor-default">
-									Term {{term.order}} <i class="icn-caret-down m-tn-l-3"></i>
+									Term {{term.order}}
 								</div>
 
 								<!-- Existing Term: Delete/Undelete Buttons -->
@@ -55,7 +59,7 @@
 						<ul id="{{@index}}" data-term-id="{{term._id}}" data-term-order="{{term.order}}" class="js-week-list js-term-closed list bg-gray-light hide">
 							{{#each week in termWeeks term._id}}
 								<li id="{{week._id}}" data-term-id="{{term._id}}" data-term-order="{{term.order}}" class="js-week-item js-existing-week-item list-item">
-									<span class="list-item-inner p-tn-l-36">
+									<span class="list-item-inner p-tn-l-54">
 										<div class="list-item-icon"><i class="{{getStatus week._id}}"></i></div> 
 										<div class="list-item-label font-weight-normal cursor-default">
 											Week {{week.order}}

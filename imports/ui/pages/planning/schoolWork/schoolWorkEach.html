@@ -1,11 +1,90 @@
 <template name="schoolWorkEach">
-	{{#each work in schoolWork}}
+	{{#if activeRoute currentRouteName 'subjectsNew'}}
 		<li class="list-item">
-			<a id="{{work._id}}" data-schoolWork-student="{{selectedStudentId}}" data-schoolWork-school-year="{{selectedSchoolYearId}}" href="/planning/schoolWork/view/3/{{selectedStudentId}}/{{selectedSchoolYearId}}/{{work._id}}" class="js-schoolWork list-item-link p-tn-rl-9 {{#if active work._id}}active{{/if}}">
-				<div class="list-item-icon"><i class="txt-primary icn-school-work"></i></div> 
-				<div class="list-item-label">{{work.name}}</div>
-			</a>
+			<span class="list-item-inner p-tn-rl-9 active">
+				<div class="list-item-caret">
+					<i class="js-caret-right icn-caret-right txt-gray-darkest"></i>
+				</div>
+				<div class="list-item-icon p-tn-t-2"><i class="txt-primary icn-subjects"></i></div> 
+				<div class="list-item-label font-style-italic font-weight-normal"> New Subject
+				</div>
+			</span>
 		</li>
+	{{/if}}
+	{{#if activeRoute currentRouteName 'workNew'}}
+		<li class="list-item">
+			<span class="list-item-inner p-tn-l-27 p-tn-r-9 active">
+				<div class="list-item-icon"><i class="txt-primary icn-school-work"></i></div> 
+				<div class="list-item-label font-style-italic font-weight-normal"> New Work
+				</div>
+			</span>
+		</li>
+	{{/if}}
+	{{#each work in schoolWork}}
+		{{#if getType work.type 'subject'}}
+			<li class="list-item">
+				<a id="{{work._id}}" data-subject-student="{{selectedStudentId}}" data-subject-school-year="{{selectedSchoolYearId}}" href="/planning/subjects/view/3/{{selectedStudentId}}/{{selectedSchoolYearId}}/{{work._id}}" class="js-subject list-item-link p-tn-rl-9 {{#if active work._id}}active{{/if}}">
+					<div class="js-subject-toggle list-item-caret" data-subject-index="{{work._id}}">
+						<i class="js-caret-right icn-caret-right txt-gray-darkest"></i>
+						<i class="js-caret-down icn-caret-down txt-gray-darkest hide"></i>
+					</div>
+					<div class="list-item-icon p-tn-t-2"><i class="txt-primary icn-subjects"></i></div> 
+					<div class="list-item-label">
+						{{work.name}} 
+					</div>
+				</a>
+			</li>
+
+			<ul class="js-{{work._id}} list hide">
+				{{#if hasWork work._id}}
+					{{#each work in getWork work._id}}
+						<li class="list-item">
+							<a id="{{work._id}}" data-work-student="{{selectedStudentId}}" data-work-school-year="{{selectedSchoolYearId}}" href="/planning/work/view/3/{{selectedStudentId}}/{{selectedSchoolYearId}}/{{work._id}}" class="js-work list-item-link p-tn-l-45 p-tn-r-9 {{#if active work._id}}active{{/if}}">
+								<div class="list-item-icon"><i class="txt-primary icn-school-work"></i></div> 
+								<div class="list-item-label">{{work.name}}</div>
+							</a>
+							<a href="#" data-menu="#dropdown{{work._id}}" class="js-dropdown print-hide list-item-dropdown list-item-dropdown-gray"></a>
+							<div id="dropdown{{work._id}}" class="list-item-dropdown-menu print-hide hide">
+								<div class="list-item-dropdown-options clearfix">
+									<div class="txt-tn-center font-weight-700 p-tn-b-3">Move To:</div>
+									<a id="" data-work-id="{{work._id}}" href="#" class="js-remove-from-subject-btn"><i class="icn-close txt-danger p-tn-rl-2"></i> Remove From Subject</a>
+									{{#each subject in subjects}}
+										{{#unless isInSubject subject._id work.subjectId}}
+											<a id="{{subject._id}}" data-work-id="{{work._id}}" href="#" class="js-add-to-subject-btn"><i class="icn-subjects txt-primary"></i> {{subject.name}}</a>
+										{{/unless}}
+									{{/each}}
+								</div>
+							</div>
+						</li>
+					{{/each}}
+				{{else}}
+					<li class="list-item">
+						<a href="#" class="list-item-link p-tn-l-45 p-tn-r-9">
+							<div class="list-item-label txt-gray-darker font-style-italic">Subject Contains No Work</div>
+						</a>
+					</li>
+				{{/if}}
+			</ul>
+		{{else}}
+			<li class="list-item">
+				<a id="{{work._id}}" data-work-student="{{selectedStudentId}}" data-work-school-year="{{selectedSchoolYearId}}" href="/planning/work/view/3/{{selectedStudentId}}/{{selectedSchoolYearId}}/{{work._id}}" class="js-work list-item-link p-tn-l-27 p-tn-r-9 {{#if active work._id}}active{{/if}}">
+					<div class="list-item-icon"><i class="txt-primary icn-school-work"></i></div> 
+					<div class="list-item-label">{{work.name}}</div>
+				</a>
+				<a href="#" data-menu="#dropdown{{work._id}}" class="js-dropdown print-hide list-item-dropdown list-item-dropdown-gray"></a>
+				<div id="dropdown{{work._id}}" class="list-item-dropdown-menu print-hide hide">
+					<div class="list-item-dropdown-options clearfix">
+						<div class="txt-tn-center font-weight-700 p-tn-b-3">Move To:</div>
+						{{#each subject in subjects}}
+							{{#unless isInSubject subject._id work.subjectId}}
+								<a id="{{subject._id}}" data-work-id="{{work._id}}" href="#" class="js-add-to-subject-btn"><i class="icn-subjects txt-primary"></i> {{subject.name}}</a>
+							{{/unless}}
+						{{/each}}
+					</div>
+				</div>
+			</li>
+		{{/if}}
 	{{/each}}
+
 	{{scroll}}
 </template>

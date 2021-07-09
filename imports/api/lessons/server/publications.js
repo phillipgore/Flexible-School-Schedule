@@ -1,5 +1,4 @@
 import {Lessons} from '../lessons.js';
-import {SchoolWork} from '../../schoolWork/schoolWork.js'
 
 Meteor.publish('schoolWorkLessons', function(schoolWorkId) {
 	if (!this.userId) {

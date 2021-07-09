@@ -148,7 +148,7 @@ Template.creditCard.events({
 				} else {
 					$('#coupon').removeClass('error');
 					$('.coupon-errors').text('');
-					console.log(result)
+
 					Session.set('coupon', result);
 					Session.set('validCoupon', true);
 				}

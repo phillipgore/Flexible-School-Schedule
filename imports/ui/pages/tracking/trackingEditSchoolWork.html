@@ -1,97 +1,115 @@
 <template name="trackingEditSchoolWork">
-	{{#each work in schoolWork}}
-		{{#if workLessonsExist work._id}}
-			<div id="js-schoolWork-track-{{work._id}}" class="js-schoolWork-track track bg-transparent p-tn-t-18 | page-break-inside-avoid">
-				<div class="clearfix m-tn-h-9 m-tn-b-0 print-hide">
-					<div class="col-tn-5of7 col-xs-7of9 col-sm-5of7 col-xl-7of9 p-tn-r-6">
-						<div class="track-icon"><i class="txt-primary icn-school-work"></i></div>
-						<div class="track-label txt-ellipsis">{{work.name}}</div>
-					</div>
-					{{#if hasNote work._id}}
-						<div class="col-tn-2of7 col-xs-2of9 col-sm-2of7 col-xl-2of9">
-							<button class="js-has-notes btn-block btn-warning tiny pill fl-tn-right">
-								<i class="icn-planning font-size-8"></i> Has Notes
-							</button>
+	{{#each item in schoolWork}}
+		{{#if isType item.type 'subject'}}
+			<div class="m-tn-h-9 {{subjectSpacing item @index}}">
+				<div class="track-divider">
+					<div class="track-divider-label track-divider-label-gray-lighter font-weight-600">
+						<div class="track-divider-icon">
+							<i class="txt-primary icn-subjects"></i>
 						</div>
-					{{/if}}
+						{{item.name}}
+					</div>
 				</div>
+			</div>
+			{{#unless item.hasSchoolWork}}
+				<div class="font-style-italic txt-gray-darkest txt-tn-center p-tn-t-27 p-tn-b-8">No Items of Work</div>
+			{{/unless}}
+		{{/if}}
 
-				<!-- Print Only -->
-				<div class="m-tn-h-9 m-tn-b-0  print-only-block">
-					<div class="track-icon"><i class="txt-primary icn-school-work"></i></div>
-					<div class="track-label txt-ellipsis">{{work.name}}</div>
-				</div>
-				<!-- /Print Only -->
+		{{#if isType item.type 'work'}}
+			{{#if workLessonsExist item._id}}
+				<div id="js-work-track-{{item._id}}" class="js-work-track track bg-transparent p-tn-t-18 | page-break-inside-avoid">
+					<div class="clearfix m-tn-h-9 m-tn-b-0 print-hide">
+						<div class="col-tn-5of7 col-xs-7of9 col-sm-5of7 col-xl-7of9 p-tn-r-6">
+							<div class="track-icon"><i class="txt-primary icn-school-work"></i></div>
+							<div class="track-label txt-ellipsis">{{item.name}}</div>
+						</div>
+						{{#if hasNote item._id}}
+							<div class="col-tn-2of7 col-xs-2of9 col-sm-2of7 col-xl-2of9">
+								<button class="js-has-notes btn-block btn-warning tiny pill fl-tn-right">
+									<i class="icn-planning font-size-8"></i> Has Notes
+								</button>
+							</div>
+						{{/if}}
+					</div>
 
-				<div class="row track-btn-container m-tn-h-9">
-					{{#if isInsert}}
-						{{#each lesson in insertableWorkLessons work._id}}
-							<div class="js-lesson-btn js-lesson-btn-existing btn pos-relative txt-tn-center col-tn-1of7 {{#if lesson.new}}btn-gray-dark-outline{{else}}{{lessonStatus lesson work._id}}{{/if}}">
-								<!-- {{#if isEdit}} -->
-									{{#if lesson.new}}
+					<!-- Print Only -->
+					<div class="m-tn-h-9 m-tn-b-0  print-only-block">
+						<div class="track-icon"><i class="txt-primary icn-school-work"></i></div>
+						<div class="track-label txt-ellipsis">{{item.name}}</div>
+					</div>
+					<!-- /Print Only -->
+
+					<div class="row track-btn-container m-tn-h-9">
+						{{#if isInsert}}
+							{{#each lesson in insertableWorkLessons item._id}}
+								<div class="js-lesson-btn js-lesson-btn-existing btn pos-relative txt-tn-center col-tn-1of7 {{#if lesson.new}}btn-gray-dark-outline{{else}}{{lessonStatus lesson item._id}}{{/if}}">
+									<!-- {{#if isEdit}} -->
+										{{#if lesson.new}}
+											<label class="checkbox track-checkbox">
+												<input data-schoolWork-id="{{item._id}}" data-lesson-id="{{lesson._id}}" data-completed="{{lesson.completed}}" data-weekDay="{{lesson.weekDay}}" data-hadWeekDay="{{lesson.hadWeekDay}}" class="js-checkbox js-segment-checkbox js-week-{{lesson.weekDay}} js-status-{{getstatus lesson._id}}" type="checkbox" name="" value="false">
+												<div class="checkbox-icon"></div>
+											</label>
+										{{/if}}
+									<!-- {{/if}} -->
+								</div>
+							{{/each}}
+						{{else}}
+							{{#each lesson in workLessons item._id}}
+								<div class="js-lesson-btn js-lesson-btn-existing btn pos-relative txt-tn-center col-tn-1of{{lessonCount item._id}} {{lessonStatus lesson item._id}} {{#if isLabels}}p-tn-l-12 p-tn-r-9{{/if}}">
+									{{#if isEdit}}
 										<label class="checkbox track-checkbox">
-											<input data-schoolWork-id="{{work._id}}" data-lesson-id="{{lesson._id}}" data-completed="{{lesson.completed}}" data-weekDay="{{lesson.weekDay}}" data-hadWeekDay="{{lesson.hadWeekDay}}" class="js-checkbox js-segment-checkbox js-week-{{lesson.weekDay}} js-status-{{getstatus lesson._id}}" type="checkbox" name="" value="false">
+											<input data-schoolWork-id="{{item._id}}" data-lesson-id="{{lesson._id}}" data-completed="{{lesson.completed}}" data-weekDay="{{lesson.weekDay}}" data-hadWeekDay="{{lesson.hadWeekDay}}" class="js-checkbox js-segment-checkbox  js-week-{{lesson.weekDay}} js-status-{{getstatus lesson._id}}" type="checkbox" name="" value="false">
 											<div class="checkbox-icon"></div>
 										</label>
 									{{/if}}
-								<!-- {{/if}} -->
-							</div>
-						{{/each}}
-					{{else}}
-						{{#each lesson in workLessons work._id}}
-							<div class="js-lesson-btn js-lesson-btn-existing btn pos-relative txt-tn-center col-tn-1of{{lessonCount work._id}} {{lessonStatus lesson work._id}} {{#if isLabels}}p-tn-l-12 p-tn-r-9{{/if}}">
-								{{#if isEdit}}
-									<label class="checkbox track-checkbox">
-										<input data-schoolWork-id="{{work._id}}" data-lesson-id="{{lesson._id}}" data-completed="{{lesson.completed}}" data-weekDay="{{lesson.weekDay}}" data-hadWeekDay="{{lesson.hadWeekDay}}" class="js-checkbox js-segment-checkbox  js-week-{{lesson.weekDay}} js-status-{{getstatus lesson._id}}" type="checkbox" name="" value="false">
-										<div class="checkbox-icon"></div>
-									</label>
-								{{/if}}
-								{{#if isLabels}}
-									<div style="margin: 0 {{weekDayLabelMargin work._id}}">
-										<div class="icn-select icn-select-btn">
-											<select class="js-weekday-label-select" name="weekDayLabel" id="{{lesson._id}}">
-												{{#each day in daysOfWeek}}
-													<option value="{{day}}" selected="{{isSelected day lesson.weekDay}}">
-														{{#unless day}}
-															---
-														{{else}}
-															{{weekDayLabel day work._id}}
-														{{/unless}}
-													</option>
-												{{/each}}
-											</select>
+									{{#if isLabels}}
+										<div style="margin: 0 {{weekDayLabelMargin item._id}}">
+											<div class="icn-select icn-select-btn">
+												<select class="js-weekday-label-select" name="weekDayLabel" id="{{lesson._id}}">
+													{{#each day in daysOfWeek}}
+														<option value="{{day}}" selected="{{isSelected day lesson.weekDay}}">
+															{{#unless day}}
+																---
+															{{else}}
+																{{weekDayLabel day item._id}}
+															{{/unless}}
+														</option>
+													{{/each}}
+												</select>
+											</div>
 										</div>
-									</div>
-								{{/if}}
-							</div>
-						{{/each}}
-					{{/if}}
+									{{/if}}
+								</div>
+							{{/each}}
+						{{/if}}
+					</div>
+					<div class="row m-tn-h-9 p-tn-tb-3">
+						{{#if isInsert}}
+							{{#each lesson in insertableWorkLessons item._id}}
+								<div class="js-lesson-weekday-label-lower col-tn-1of7 txt-tn-center font-size-12 txt-gray-darkest">
+									{{#if lesson.hadWeekDay}}
+										{{weekDays lesson.weekDay}}
+									{{else}}
+										&nbsp;
+									{{/if}}
+								</div>
+							{{/each}}
+						{{else}}
+							{{#each lesson in workLessons item._id}}
+								<div class="js-lesson-weekday-label-lower col-tn-1of{{lessonCount item._id}} txt-tn-center font-size-12 txt-gray-darkest">
+									{{#if isWeekDay lesson.weekDay}}
+										{{weekDays lesson.weekDay}}
+									{{else}}
+										&nbsp;
+									{{/if}}
+								</div>
+							{{/each}}
+						{{/if}}
+					</div>
+					<label class="error track-error"></label>
 				</div>
-				<div class="row m-tn-h-9 p-tn-tb-3">
-					{{#if isInsert}}
-						{{#each lesson in insertableWorkLessons work._id}}
-							<div class="js-lesson-weekday-label-lower col-tn-1of7 txt-tn-center font-size-12 txt-gray-darkest">
-								{{#if lesson.hadWeekDay}}
-									{{weekDays lesson.weekDay}}
-								{{else}}
-									&nbsp;
-								{{/if}}
-							</div>
-						{{/each}}
-					{{else}}
-						{{#each lesson in workLessons work._id}}
-							<div class="js-lesson-weekday-label-lower col-tn-1of{{lessonCount work._id}} txt-tn-center font-size-12 txt-gray-darkest">
-								{{#if isWeekDay lesson.weekDay}}
-									{{weekDays lesson.weekDay}}
-								{{else}}
-									&nbsp;
-								{{/if}}
-							</div>
-						{{/each}}
-					{{/if}}
-				</div>
-				<label class="error track-error"></label>
-			</div>
-		{{/if}}
+			{{/if}}
+		{{/if}}	
 	{{/each}}
 </template>

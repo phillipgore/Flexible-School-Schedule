@@ -6,7 +6,6 @@ import _ from 'lodash';
 // Create Application Admin Account
 let adminGroup = Groups.find({appAdmin: true})
 if (!adminGroup.count() || _.isUndefined(adminGroup)) {
-	console.log('hello')	
 	let users = [
 		{
 			email: Meteor.settings.private.appAdmin.email,
@@ -16,7 +15,6 @@ if (!adminGroup.count() || _.isUndefined(adminGroup)) {
 				lastName: 'Gore',
 				relationshipToStudents: 'Dad',
 				role: 'Application Administrator',
-				groupId: null,
 			},
 			status: {
 				active: true,
@@ -36,7 +34,6 @@ if (!adminGroup.count() || _.isUndefined(adminGroup)) {
 					lastName: 'Account',
 					relationshipToStudents: 'Dad',
 					role: 'Developer',
-					groupId: null,
 				},
 				status: {
 					active: true,
@@ -57,22 +54,23 @@ if (!adminGroup.count() || _.isUndefined(adminGroup)) {
 			termId: 'empty',
 			weekId: 'empty',
 			schoolWorkId: 'empty',
+			schoolWorkType: 'work',
 			userId: 'empty',
 			reportId: 'empty',
 			groupId: 'empty',
 		}
 	}
 
-	Groups.insert(adminGroupProperties, function(error, result) {
+	Groups.insert(adminGroupProperties, function(error, groupId) {
 		if (error) {
 			console.log(error.reason);
 		} else {
-			users.forEach((user) => {
-				user.info.groupId = result;
+			users.forEach(user => {
+				user.info.groupId = groupId;
 				let userId = Accounts.createUser(user);
 				Meteor.users.update(userId, {$set: {"emails.0.verified" :true}});
-				Meteor.call('mcTags', result);
 			});
+			Meteor.call('mcTags', groupId);
 		}
 	});
 };

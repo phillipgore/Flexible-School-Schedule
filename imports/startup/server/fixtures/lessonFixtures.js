@@ -61,6 +61,7 @@ Meteor.methods({
 										completed: false,
 										schoolWorkId: schoolWork._id,
 										schoolYearId: schoolYear._id,
+										subjectId: schoolWork.subjectId,
 										termId: term._id,
 										weekId: week._id,
 										studentId: student._id,

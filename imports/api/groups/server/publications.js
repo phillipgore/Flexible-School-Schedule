@@ -1,5 +1,4 @@
 import {Groups} from '../groups.js';
-import {primaryInitialIds} from '../../../modules/server/initialIds';
 
 Meteor.publish('group', function() {
 	if (!this.userId) {

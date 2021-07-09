@@ -1,9 +1,4 @@
 import {Terms} from '../terms.js';
-import {Stats} from '../../stats/stats.js';
-import {Paths} from '../../paths/paths.js';
-import {SchoolYears} from '../../schoolYears/schoolYears.js';
-import {Weeks} from '../../weeks/weeks.js';
-import {Lessons} from '../../lessons/lessons.js';
 
 import _ from 'lodash'
 

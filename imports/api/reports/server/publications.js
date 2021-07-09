@@ -1,8 +1,8 @@
 import {Reports} from '../reports.js';
-import {Students} from '../../students/students.js';
 import {SchoolYears} from '../../schoolYears/schoolYears.js';
 import {Terms} from '../../terms/terms.js';
 import {Weeks} from '../../weeks/weeks.js';
+import {Subjects} from '../../subjects/subjects.js';
 import {SchoolWork} from '../../schoolWork/schoolWork.js';
 import {Notes} from '../../notes/notes.js';
 import {Resources} from '../../resources/resources.js';
@@ -10,7 +10,6 @@ import {Lessons} from '../../lessons/lessons.js';
 
 import {minutesConvert} from '../../../modules/server/functions';
 import _ from 'lodash';
-import moment from 'moment';
 
 Meteor.publish('allReports', function() {
 	if (!this.userId) {
@@ -105,33 +104,32 @@ Meteor.publish('reportData', function(studentId, schoolYearId, termId, weekId, r
 				let yearPercentComplete = percentComplete(yearLessonsCompletedTotal, yearLessonsTotal);
 				let yearLessonsIncompletedTotal = _.filter(yearLessons, ['completed', false]).length;
 
-				if (report.schoolYearStatsVisible) {
-					schoolYearStats.termCount = yearTerms.length;
-					schoolYearStats.schoolWorkCount = yearSchoolWork.length;
-					schoolYearStats.weekCount = yearWeeks.length;
-					schoolYearStats.dayCount = yearWeeks.length * report.weekEquals;
-					schoolYearStats.lessonCount = yearLessons.length;
-				}
+				// Progress
+				function progress(percentComplete) {
+					if (percentComplete > 0 && percentComplete < 1) {
+						return 1;
+					} 
+					return Math.floor(percentComplete);
+				};
 
-				if (report.schoolYearProgressVisible) {
-					function progress(percentComplete) {
-						if (percentComplete > 0 && percentComplete < 1) {
-							return 1;
-						} 
-						return Math.floor(percentComplete);
-					};
+				function progressStatus(lessonsIncompleteTotal) {
+					if (!lessonsIncompleteTotal) {
+						return true;
+					} 
+					return false;
+				};
 
-					function progressStatus(lessonsIncompleteTotal) {
-						if (!lessonsIncompleteTotal) {
-							return true;
-						} 
-						return false;
-					};
+				schoolYearStats.progress = progress(yearPercentComplete);
+				schoolYearStats.progressComplete = progressStatus(yearLessonsIncompletedTotal);
 
-					schoolYearStats.progress = progress(yearPercentComplete);
-					schoolYearStats.progressComplete = progressStatus(yearLessonsIncompletedTotal);
-				}
+				// Scheduled
+				schoolYearStats.termCount = yearTerms.length;
+				schoolYearStats.schoolWorkCount = yearSchoolWork.length;
+				schoolYearStats.weekCount = yearWeeks.length;
+				schoolYearStats.dayCount = yearWeeks.length * report.weekEquals;
+				schoolYearStats.lessonCount = yearLessons.length;
 
+				// Completed
 				let completeSchoolWorkIds = []
 				yearSchoolWork.forEach(work => {
 					let totalLessons = yearLessons.filter(lesson => lesson.schoolWorkId === work._id).length;
@@ -139,36 +137,34 @@ Meteor.publish('reportData', function(studentId, schoolYearId, termId, weekId, r
 					let incompletedLessons = yearLessons.filter(lesson => lesson.schoolWorkId === work._id && !lesson.completed).length;
 					let partiallyCompletedPercentage = Math.trunc(completedLessons / totalLessons * 100);
 
-					if (!incompletedLessons) {completeSchoolWorkIds.push(work._id)}
+					if (totalLessons && !incompletedLessons) {completeSchoolWorkIds.push(work._id)}
 				});
 				let yearPercentageCompleted = schoolYearStats.progress / 100;
-				if (report.schoolYearCompletedVisible) {
-					schoolYearStats.termsCompletedCount = (yearPercentageCompleted * schoolYearStats.termCount).toFixed(2);
-					schoolYearStats.schoolWorkCompletedCount = completeSchoolWorkIds.length;
-					schoolYearStats.weeksCompletedCount = (yearPercentageCompleted * schoolYearStats.weekCount).toFixed(2);
-					schoolYearStats.daysCompletedCount = (yearPercentageCompleted * schoolYearStats.dayCount).toFixed(2);
-					schoolYearStats.lessonsCompletedCount = (yearPercentageCompleted * schoolYearStats.lessonCount).toFixed(2);
-				}
 
-				if (report.schoolYearTimesVisible) {
-					let hasCompletedLessonWeekIds = _.uniq(_.filter(yearLessons, ['completed', true]).map(lesson => (lesson.weekId)));
-					let hasCompletedLessonTermIds = Weeks.find({_id: {$in: hasCompletedLessonWeekIds}}).map(week => (week.termId));
-					let yearTermsTotal = Terms.find({_id: {$in: hasCompletedLessonTermIds}}).count();			
-					let yearWeeksTotal = hasCompletedLessonWeekIds.length;
-					let yearDaysTotal = yearWeeksTotal * report.weekEquals
+				schoolYearStats.termsCompletedCount = (yearPercentageCompleted * schoolYearStats.termCount).toFixed(2);
+				schoolYearStats.schoolWorkCompletedCount = completeSchoolWorkIds.length;
+				schoolYearStats.weeksCompletedCount = (yearPercentageCompleted * schoolYearStats.weekCount).toFixed(2);
+				schoolYearStats.daysCompletedCount = (yearPercentageCompleted * schoolYearStats.dayCount).toFixed(2);
+				schoolYearStats.lessonsCompletedCount = yearLessons.filter(lesson => lesson.completed).length;
 
-					let yearTotalTimeMinutes = _.sum(yearLessonCompletionTimes);
-					let yearAverageTermMinutes = _.sum(yearLessonCompletionTimes) / yearTermsTotal;
-					let yearAverageWeekMinutes = _.sum(yearLessonCompletionTimes) / yearWeeksTotal;
-					let yearAverageDayMinutes = _.sum(yearLessonCompletionTimes) / yearDaysTotal;
-					let yearAverageLessonMinutes = _.sum(yearLessonCompletionTimes) / yearLessonsCompletedTotal;
+				// Time
+				let hasCompletedLessonWeekIds = _.uniq(_.filter(yearLessons, ['completed', true]).map(lesson => (lesson.weekId)));
+				let hasCompletedLessonTermIds = Weeks.find({_id: {$in: hasCompletedLessonWeekIds}}).map(week => (week.termId));
+				let yearTermsTotal = Terms.find({_id: {$in: hasCompletedLessonTermIds}}).count();			
+				let yearWeeksTotal = hasCompletedLessonWeekIds.length;
+				let yearDaysTotal = yearWeeksTotal * report.weekEquals
 
-					schoolYearStats.totalTime = minutesConvert(yearTotalTimeMinutes);
-					schoolYearStats.averageLessons = minutesConvert(yearAverageLessonMinutes);
-					schoolYearStats.averageDays = minutesConvert(yearAverageDayMinutes);
-					schoolYearStats.averageWeeks = minutesConvert(yearAverageWeekMinutes);
-					schoolYearStats.averageTerms = minutesConvert(yearAverageTermMinutes);
-				}
+				let yearTotalTimeMinutes = _.sum(yearLessonCompletionTimes);
+				let yearAverageTermMinutes = _.sum(yearLessonCompletionTimes) / yearTermsTotal;
+				let yearAverageWeekMinutes = _.sum(yearLessonCompletionTimes) / yearWeeksTotal;
+				let yearAverageDayMinutes = _.sum(yearLessonCompletionTimes) / yearDaysTotal;
+				let yearAverageLessonMinutes = _.sum(yearLessonCompletionTimes) / yearLessonsCompletedTotal;
+
+				schoolYearStats.totalTime = minutesConvert(yearTotalTimeMinutes);
+				schoolYearStats.averageLessons = minutesConvert(yearAverageLessonMinutes);
+				schoolYearStats.averageDays = minutesConvert(yearAverageDayMinutes);
+				schoolYearStats.averageWeeks = minutesConvert(yearAverageWeekMinutes);
+				schoolYearStats.averageTerms = minutesConvert(yearAverageTermMinutes);
 
 				self.added('schoolYears', schoolYearId, schoolYearStats);
 			}
@@ -192,33 +188,30 @@ Meteor.publish('reportData', function(studentId, schoolYearId, termId, weekId, r
 					termData.order = term.order;
 					termData.schoolYearId = schoolYearId;
 
-					if (report.termsStatsVisible) {
-						termData.schoolWorkCount = termSchoolWork.length;
-						termData.weekCount = termWeekIds.length;
-						termData.dayCount =  termWeekIds.length * report.weekEquals
-						termData.lessonCount = termLessonsTotal;
+					// Progress
+					let lessonsCompletedTotal = _.filter(termLessons, ['completed', true]).length;
+					let termPercentComplete = percentComplete(lessonsCompletedTotal, termLessonsTotal);
+					
+					if (termPercentComplete > 0 && termPercentComplete < 1) {
+						termData.progress =  1;
+					} else {
+						termData.progress = Math.floor(termPercentComplete);
 					}
 
-					if (report.termsProgressVisible) {
-						// Term Progress
-						let lessonsCompletedTotal = _.filter(termLessons, ['completed', true]).length;
-						let termPercentComplete = percentComplete(lessonsCompletedTotal, termLessonsTotal);
-						
-						if (termPercentComplete > 0 && termPercentComplete < 1) {
-							termData.progress =  1;
-						} else {
-							termData.progress = Math.floor(termPercentComplete);
-						}
-
-						// Term Progress Status
-						let lessonsIncompleteTotal = _.filter(termLessons, ['completed', false]).length;
-						if (!lessonsIncompleteTotal) {
-							termData.progressComplete = true;
-						} else {
-							termData.progressComplete = false;
-						}
+					let lessonsIncompleteTotal = _.filter(termLessons, ['completed', false]).length;
+					if (!lessonsIncompleteTotal) {
+						termData.progressComplete = true;
+					} else {
+						termData.progressComplete = false;
 					}
 
+					// Scheduled
+					termData.schoolWorkCount = termSchoolWork.length;
+					termData.weekCount = termWeekIds.length;
+					termData.dayCount =  termWeekIds.length * report.weekEquals
+					termData.lessonCount = termLessonsTotal;
+
+					// Completed
 					let completeSchoolWorkIds = []
 					termSchoolWork.forEach(work => {
 						let totalLessons = termLessons.filter(lesson => lesson.schoolWorkId === work._id).length;
@@ -234,39 +227,139 @@ Meteor.publish('reportData', function(studentId, schoolYearId, termId, weekId, r
 						termData.schoolWorkCompletedCount = completeSchoolWorkIds.length;
 						termData.weeksCompletedCount = (termPercentageCompleted * termData.weekCount).toFixed(2);
 						termData.daysCompletedCount = (termPercentageCompleted * termData.dayCount).toFixed(2);
-						termData.lessonsCompletedCount = (termPercentageCompleted * termData.lessonCount).toFixed(2);
+						termData.lessonsCompletedCount = termLessons.filter(lesson => lesson.completed).length;
 					}
 					
-					if (report.termsTimesVisible) {
-						// Term Total Time
-						let lessonCompletionTimes = _.filter(termLessons, ['completed', true]).map(lesson => (lesson.completionTime)).filter(time => (time != undefined));
-						let totalMinutes = _.sum(lessonCompletionTimes);
+					// Time
+					let lessonCompletionTimes = _.filter(termLessons, ['completed', true]).map(lesson => (lesson.completionTime)).filter(time => (time != undefined));
+					let totalMinutes = _.sum(lessonCompletionTimes);
 
-						termData.totalTime = minutesConvert(totalMinutes);
+					termData.totalTime = minutesConvert(totalMinutes);
 
-						//  Terms Average Weeks
-						let completedWeekIds = _.uniq(_.filter(termLessons, ['completed', true]).map(lesson => (lesson.weekId)));
-						let weeksTotal = completedWeekIds.length;
-						let averageWeekMinutes = _.sum(lessonCompletionTimes) / weeksTotal;
-						termData.averageWeeks = minutesConvert(averageWeekMinutes);
+					let completedWeekIds = _.uniq(_.filter(termLessons, ['completed', true]).map(lesson => (lesson.weekId)));
+					let weeksTotal = completedWeekIds.length;
+					let averageWeekMinutes = _.sum(lessonCompletionTimes) / weeksTotal;
+					termData.averageWeeks = minutesConvert(averageWeekMinutes);
 
-						//  Terms Average Days
-						let termDaysTotal = weeksTotal * report.weekEquals
-						let termAverageDayMinutes = totalMinutes / termDaysTotal;
-						termData.averageDays = minutesConvert(termAverageDayMinutes);
+					let termDaysTotal = weeksTotal * report.weekEquals
+					let termAverageDayMinutes = totalMinutes / termDaysTotal;
+					termData.averageDays = minutesConvert(termAverageDayMinutes);
 
-						//  Terms Average Lessons
-						let averageLessonMinutes = _.sum(lessonCompletionTimes) / lessonCompletionTimes.length;
-						termData.averageLessons = minutesConvert(averageLessonMinutes);
+					let averageLessonMinutes = _.sum(lessonCompletionTimes) / lessonCompletionTimes.length;
+					termData.averageLessons = minutesConvert(averageLessonMinutes);
 
-					}
 
 					termsStats.push(termData);
 				});
 			}
 			termsStats.forEach(term => {
 				self.added('terms', term._id, term);
-			})
+			});
+
+
+
+
+			// Subjects Data
+			let subjectStats = [];
+			if (report.schoolWorkReportVisible) {
+				let weekIds = reportWeeks.map(week => week._id);
+				let lessons = yearLessons.filter(yearlesson => weekIds.includes(yearlesson.weekId));
+
+				let schoolWorkIds = lessons.map(lesson => lesson.schoolWorkId);
+				let schoolWork = yearSchoolWork.filter(yearWork => schoolWorkIds.includes(yearWork._id));
+
+				let getSubjectIds = schoolWork.map(work => work.subjectId);
+				let subjectIds = getSubjectIds.filter((subjectId, index) => subjectId && getSubjectIds.indexOf(subjectId) === index);
+				let subjects = Subjects.find({_id: {$in: subjectIds}}).fetch();
+
+				// Work wih no subject.
+				let noSubject =	{_id: 'noSubject', name: 'No Subject', schoolYearId: schoolYearId, studentId: studentId,};
+				subjects.push(noSubject);
+
+				subjects.forEach((subject) => {
+					let subjectData = {};
+
+					subjectData._id = subject._id;
+					subjectData.name = subject.name;
+					subjectData.schoolYearId = subject.schoolYearId;
+					subjectData.studentId = subject.studentId;
+
+					let subjectLessons = subject._id === 'noSubject' ? 
+						lessons.filter(lesson => !lesson.subjectId) :
+						lessons.filter(lesson => lesson.subjectId === subject._id);
+
+					let subjectTermIds = _.uniq(subjectLessons.map(lesson => lesson.termId));
+					let subjectWorkIds = _.uniq(subjectLessons.map(lesson => lesson.schoolWorkId));
+					let subjectWeekIds = _.uniq(subjectLessons.map(lesson => lesson.weekId));
+
+					let subjectLessonsTotal = subjectLessons.length;
+					let subjectLessonsCompletedTotal = subjectLessons.filter(lesson => lesson.completed).length;
+					let subjectLessonsIncompleteTotal = subjectLessons.filter(lesson => !lesson.completed).length;
+					let subjectPercentComplete = percentComplete(subjectLessonsCompletedTotal, subjectLessonsTotal);
+
+					// Progress
+					if (subjectPercentComplete > 0 && subjectPercentComplete < 1) {
+						subjectData.progress = 1;
+					} else {
+						subjectData.progress = Math.floor(subjectPercentComplete);
+					}
+
+					if (!subjectLessonsIncompleteTotal) {
+						subjectData.progressComplete = true;
+					} else {
+						subjectData.progressComplete = false;
+					}
+
+					// Scheduled
+					subjectData.termCount = subjectTermIds.length;
+					subjectData.schoolWorkCount = subjectWorkIds.length;
+					subjectData.weekCount = subjectWeekIds.length;
+					subjectData.lessonCount = subjectLessons.length;
+
+					// Completed
+					let completeSchoolWorkIds = []
+					subjectWorkIds.forEach(workId => {
+						let totalLessons = subjectLessons.filter(lesson => lesson.schoolWorkId === workId).length;
+						let completedLessons = subjectLessons.filter(lesson => lesson.schoolWorkId === workId && lesson.completed).length;
+						let incompletedLessons = subjectLessons.filter(lesson => lesson.schoolWorkId === workId && !lesson.completed).length;
+						let partiallyCompletedPercentage = Math.trunc(completedLessons / totalLessons * 100);
+
+						if (!incompletedLessons) {completeSchoolWorkIds.push(workId)}
+					});
+
+					let subjectPercentageCompleted = subjectData.progress / 100;
+					if (report.schoolYearCompletedVisible) {
+						subjectData.schoolWorkCompletedCount = completeSchoolWorkIds.length;
+						subjectData.termsCompletedCount = (subjectPercentageCompleted * subjectData.termCount).toFixed(2);
+						subjectData.weeksCompletedCount = (subjectPercentageCompleted * subjectData.weekCount).toFixed(2);
+						subjectData.lessonsCompletedCount = subjectLessons.filter(lesson => lesson.completed).length;
+					}
+
+					// Time
+					let lessonCompletionTimes = _.filter(subjectLessons, ['completed', true]).map(lesson => (lesson.completionTime)).filter(time => (time != undefined));
+					let totalMinutes = _.sum(lessonCompletionTimes);
+					subjectData.totalTime = minutesConvert(totalMinutes);
+
+					let completedTermIds = _.uniq(_.filter(subjectLessons, ['completed', true]).map(lesson => (lesson.termId)));
+					let termsTotal = completedTermIds.length;
+					let averagTermMinutes = _.sum(lessonCompletionTimes) / termsTotal;
+					subjectData.averageTerms = minutesConvert(averagTermMinutes);
+
+					let completedWeekIds = _.uniq(_.filter(subjectLessons, ['completed', true]).map(lesson => (lesson.weekId)));
+					let weeksTotal = completedWeekIds.length;
+					let averageWeekMinutes = _.sum(lessonCompletionTimes) / weeksTotal;
+					subjectData.averageWeeks = minutesConvert(averageWeekMinutes);
+
+					let averageLessonMinutes = _.sum(lessonCompletionTimes) / lessonCompletionTimes.length;
+					subjectData.averageLessons = minutesConvert(averageLessonMinutes);
+
+
+					subjectStats.push(subjectData);
+				});
+			}
+			subjectStats.forEach(subject => {
+				self.added('subjects', subject._id, subject);
+			});
 
 
 
@@ -281,14 +374,15 @@ Meteor.publish('reportData', function(studentId, schoolYearId, termId, weekId, r
 				schoolWork.forEach((schoolWork) => {
 					let schoolWorkData = {};
 
-					let schoolWorkLessons = _.filter(lessons, ['schoolWorkId', schoolWork._id])
-					let schoolWorkWeeks = _.filter(reportWeeks, week => _.includes(schoolWorkLessons.map(lesson => lesson.weekId), week._id))
-					let schoolWorkTerms = _.filter(reportTerms, term => _.includes(schoolWorkWeeks.map(week => week.termId), term._id))
+					let schoolWorkLessons = _.filter(lessons, ['schoolWorkId', schoolWork._id]);
+					let schoolWorkWeeks = _.filter(reportWeeks, week => _.includes(schoolWorkLessons.map(lesson => lesson.weekId), week._id));
+					let schoolWorkTerms = _.filter(reportTerms, term => _.includes(schoolWorkWeeks.map(week => week.termId), term._id));
 
 					schoolWorkData._id = schoolWork._id;
 					schoolWorkData.weekData = [];
 					schoolWorkData.order = schoolWork.order;
 					schoolWorkData.name = schoolWork.name;
+					schoolWorkData.subjectId = schoolWork.subjectId;
 					schoolWorkData.studentId = studentId;
 					schoolWorkData.schoolYearId = schoolYearId;
 

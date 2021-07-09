@@ -49,7 +49,7 @@ Template.toolbar.helpers({
 	},
 
 	newUrl: function() {
-		if (Session.get('toolbarType') === 'schoolWork') {
+		if (Session.get('toolbarType') === 'schoolWork' || Session.get('toolbarType') === 'subject') {
 			let initialIds = Groups.findOne({_id: Meteor.user().info.groupId}).initialIds;
 			if (initialIds.studentId === 'empty' || initialIds.schoolYearId === 'empty') {
 				return '#';
@@ -57,10 +57,6 @@ Template.toolbar.helpers({
 			return Session.get('newUrl');
 		}
 		return Session.get('newUrl');
-	},
-
-	type: function() {
-		return Session.get('toolbarType');
 	},
 
 	newable: function() {
@@ -71,7 +67,18 @@ Template.toolbar.helpers({
 		if (Session.get('selectedFramePosition') === 1 && type === 'report') {
 			return true;
 		}
-		if (Session.get('selectedFramePosition') === 2 && type != 'report' && type != 'resource') {
+		if (Session.get('selectedFramePosition') === 2 && type != 'report' && type != 'resource' && type != 'schoolWork') {
+			return true;
+		}
+		return false;
+	},
+
+	schoolWorkNewable: function() {
+		let type = Session.get('toolbarType');
+		if (type === 'new' || type === 'edit') {
+			return false;
+		}
+		if (Session.get('selectedFramePosition') === 2 && Session.get('toolbarType') === 'schoolWork') {
 			return true;
 		}
 		return false;
@@ -112,24 +119,12 @@ Template.toolbar.helpers({
 		return false;
 	},
 
-	selectedResourceType: function() {
-		return Session.get('selectedResourceType');
-	},
-
-	selectedResourceAvailability: function() {
-		return Session.get('selectedResourceAvailability');
-	},
-
 	selectedStudentId: function() {
 		return Session.get('selectedStudentId');
 	},
 
 	selectedSchoolYearId: function() {
 		return Session.get('selectedSchoolYearId');
-	},
-
-	selectedReportId: function() {
-		return Session.get('selectedReportId');
 	},
 
 	editUrl: function() {
@@ -145,6 +140,13 @@ Template.toolbar.helpers({
 
 		if (type === 'schoolWork') {
 			if (FlowRouter.getParam('selectedSchoolWorkId') === 'empty') {
+				return false;
+			}
+			return true;
+		}
+
+		if (type === 'subject') {
+			if (FlowRouter.getParam('selectedSubjectId') === 'empty') {
 				return false;
 			}
 			return true;
@@ -254,6 +256,16 @@ Template.toolbar.events({
 		});
 	},
 
+	'click .js-delete-subject'(event) {
+		event.preventDefault();
+
+		Dialogs.insert({
+			heading: 'Confirmation',
+			message: 'Are you sure you want to delete this Subject?',
+			confirmClass: 'js-delete js-delete-subject-confirmed',
+		});
+	},
+
 	'click .js-delete-schoolWork'(event) {
 		event.preventDefault();
 
@@ -304,6 +316,7 @@ Template.toolbar.events({
 			selectedWeekId: '',
 			selectedReportingWeekId: '',
 			selectedSchoolWorkId: '',
+			selectedSchoolWorkType: '',
 			selectedReportId: '',
 			selectedUserId: '',
 			planningPathName: '',

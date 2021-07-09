@@ -86,29 +86,63 @@ const ReportsSchema = new SimpleSchema({
 		label: "School Work Report",
 		defaultValue: true,
 	},
+
+    // Subjects
+    subjectReportVisible: {
+		type: Boolean,
+		label: "Subject Report",
+		defaultValue: true,
+	},
+	subjectProgressVisible: {
+		type: Boolean,
+		label: "Subject Progress",
+		defaultValue: true,
+	},
+	subjectStatsVisible: {
+		type: Boolean,
+		label: "Subject Stats",
+		defaultValue: false,
+	},
+	subjectCompletedVisible: {
+		type: Boolean,
+		label: "Subject Progress Stats",
+		defaultValue: false,
+	},
+	subjectTimesVisible: {
+		type: Boolean,
+		label: "SubjectTimes",
+		defaultValue: false,
+	},
+	
+	// Work
+	workReportVisible: {
+		type: Boolean,
+		label: "Work Stats",
+		defaultValue: true,
+	},
 	schoolWorkStatsVisible: {
 		type: Boolean,
-		label: "School Work Stats",
+		label: "Work Stats",
 		defaultValue: true,
 	},
 	schoolWorkProgressVisible: {
 		type: Boolean,
-		label: "School Work Progress",
+		label: "Work Progress",
 		defaultValue: true,
 	},
 	schoolWorkTimesVisible: {
 		type: Boolean,
-		label: "School Work Times",
+		label: "Work Times",
 		defaultValue: true,
 	},
 	schoolWorkDescriptionVisible: {
 		type: Boolean,
-		label: "School Work Description",
+		label: "Work Description",
 		defaultValue: true,
 	},
 	schoolWorkResourcesVisible: {
 		type: Boolean,
-		label: "School Work Resources",
+		label: "Work Resources",
 		defaultValue: true,
 	},
 	

@@ -182,6 +182,10 @@ const GroupsSchema = new SimpleSchema({
         type: String,
         label: "Initial School Work Id",
     },
+    'initialIds.schoolWorkType': {
+        type: String,
+        label: "Initial School Work Type",
+    },
     'initialIds.userId': {
         type: String,
         label: "Initial User Id",

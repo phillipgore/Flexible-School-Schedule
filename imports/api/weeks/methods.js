@@ -1,9 +1,4 @@
-import {Mongo} from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-
-import {Weeks} from './weeks.js';
 import {Lessons} from '../lessons/lessons.js';
-import {primaryInitialIds} from '../../modules/server/initialIds';
 
 import _ from 'lodash';
 

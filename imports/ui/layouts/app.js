@@ -4,6 +4,7 @@ import { Groups } from '../../api/groups/groups.js';
 import { SchoolYears } from '../../api/schoolYears/schoolYears.js';
 import { Students } from '../../api/students/students.js';
 import { Resources } from '../../api/resources/resources.js';
+import { Subjects } from '../../api/subjects/subjects.js';
 import { SchoolWork } from '../../api/schoolWork/schoolWork.js';
 import { Reports } from '../../api/reports/reports.js';
 import { Terms } from '../../api/terms/terms.js';
@@ -23,7 +24,13 @@ Template.app.onRendered( function() {
 });
 
 Template.app.helpers({
-	userId: function() {
+	selectedSchoolWorkId: function() {
+		return Session.get('selectedSchoolWorkId');
+	},
+	selectedSchoolWorkType: function() {
+		return Session.get('selectedSchoolWorkType');
+	},
+	suserId: function() {
 		return Meteor.userId();
 	},
 
@@ -55,7 +62,7 @@ Template.app.helpers({
 	},
 
 	resourcePopUp: function() {
-		if (FlowRouter.getRouteName() === 'schoolWorkNew' || FlowRouter.getRouteName() === 'schoolWorkEdit') {
+		if (FlowRouter.getRouteName() === 'workNew' || FlowRouter.getRouteName() === 'workEdit') {
 			return true;
 		}
 		return false;
@@ -256,21 +263,129 @@ Template.app.events({
 		});
 	},
 	
+	'click .js-delete-subject-confirmed'(event) {
+		event.preventDefault();
+		$('.js-deleting').show();
+
+		function nextSchoolWorkId(selectedSchoolWorkId) {
+			let subjects = Subjects.find({schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId')}).fetch();
+			subjects.forEach(subject => subject.type = 'subjects');
+
+			let workItems = SchoolWork.find({schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId'), subjectId: {$exists: false}}).fetch();
+			workItems.forEach(workItem => workItem.type = 'work');
+
+			let schoolWork = _.sortBy(subjects.concat(workItems), ['name'])
+			let schoolWorkIds = schoolWork.map(schoolWork => (schoolWork._id));
+			let selectedIndex = schoolWorkIds.indexOf(selectedSchoolWorkId);
+
+			if (selectedIndex) {
+				return {
+					_id: schoolWorkIds[selectedIndex - 1],
+					type: schoolWork.find(work => work._id === schoolWorkIds[selectedIndex - 1]).type
+				}
+			}
+			return {
+				_id: schoolWorkIds[selectedIndex + 1],
+				type: schoolWork.find(work => work._id === schoolWorkIds[selectedIndex + 1]).type
+			}
+		}
+
+		let newSchoolWork = nextSchoolWorkId(FlowRouter.getParam('selectedSubjectId'));
+		let dialogId = Dialogs.findOne()._id;
+
+		let pathProperties = {
+			studentIds: [FlowRouter.getParam('selectedStudentId')],
+			schoolYearIds: [FlowRouter.getParam('selectedSchoolYearId')],
+			termIds: Terms.find({schoolYearId: FlowRouter.getParam('selectedSchoolWorkId')}).map(term => term.termId),
+		}
+
+		let statProperties = {
+			studentIds: [FlowRouter.getParam('selectedStudentId')],
+			schoolYearIds: [FlowRouter.getParam('selectedSchoolYearId')],
+			termIds: Terms.find({schoolYearId: FlowRouter.getParam('selectedSchoolWorkId')}).map(term => term.termId),
+			weekIds: Weeks.find({}).map(week => week._id),
+		}
+
+		Dialogs.remove({_id: dialogId});
+		Meteor.call('deleteSubject', FlowRouter.getParam('selectedSubjectId'), function(error) {
+			if (error) {
+				Alerts.insert({
+					colorClass: 'bg-danger',
+					iconClass: 'icn-danger',
+					message: error.reason,
+				});
+			} else {
+				Meteor.call('runUpsertSchoolWorkPathsAndStats', pathProperties, statProperties, function(error, result) {
+					if (error) {
+						Alerts.insert({
+							colorClass: 'bg-danger',
+							iconClass: 'icn-danger',
+							message: error.reason,
+						});
+					} else {
+						Session.set('selectedSchoolWorkId', newSchoolWork._id);
+						Session.set('selectedSchoolWorkType', 'work');
+						if (window.screen.availWidth > 768) {
+							FlowRouter.go('/planning/' + newSchoolWork.type + '/view/3/' + FlowRouter.getParam('selectedStudentId') +'/'+ FlowRouter.getParam('selectedSchoolYearId') +'/'+ newSchoolWork._id);
+						} else {
+							FlowRouter.go('/planning/' + newSchoolWork.type + '/view/2/' + FlowRouter.getParam('selectedStudentId') +'/'+ FlowRouter.getParam('selectedSchoolYearId') +'/'+ newSchoolWork._id);
+						}
+						$('.js-deleting').hide();
+					}
+				});
+			}
+		});
+
+		Dialogs.remove({_id: dialogId});
+	},
+	
 	'click .js-delete-schoolWork-confirmed'(event) {
 		event.preventDefault();
 		$('.js-deleting').show();
 
 		function nextSchoolWorkId(selectedSchoolWorkId) {
-			let schoolWorkIds = SchoolWork.find({}, {sort: {name: 1}}).map(schoolWork => (schoolWork._id));
-			let selectedIndex = schoolWorkIds.indexOf(selectedSchoolWorkId);
+			let selectedSchoolWork = SchoolWork.findOne({_id: selectedSchoolWorkId});
 
-			if (selectedIndex) {
-				return schoolWorkIds[selectedIndex - 1]
+			// selectedSchoolWork has subjectId?
+			if (selectedSchoolWork.subjectId) {
+				let schoolWorkIds = SchoolWork.find({subjectId: selectedSchoolWork.subjectId}, {sort: {name: 1}}).map(schoolWork => (schoolWork._id));
+				let selectedIndex = schoolWorkIds.indexOf(selectedSchoolWorkId);
+
+				if (selectedIndex) {
+					return {
+						_id: schoolWorkIds[selectedIndex - 1],
+						type: "work",
+					};
+				}
+				return {
+					_id: selectedSchoolWork.subjectId,
+					type: "subjects",
+				};
+			} else {
+				let subjects = Subjects.find({schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId')}).fetch();
+				subjects.forEach(subject => subject.type = 'subjects');
+
+				let workItems = SchoolWork.find({schoolYearId: FlowRouter.getParam('selectedSchoolYearId'), studentId: FlowRouter.getParam('selectedStudentId'), subjectId: {$exists: false}}).fetch();
+				workItems.forEach(workItem => workItem.type = 'work');
+
+				let schoolWork = _.sortBy(subjects.concat(workItems), ['name'])
+				let schoolWorkIds = schoolWork.map(schoolWork => (schoolWork._id));
+				let selectedIndex = schoolWorkIds.indexOf(selectedSchoolWorkId);
+
+				if (selectedIndex) {
+					return {
+						_id: schoolWorkIds[selectedIndex - 1],
+						type: schoolWork.find(work => work._id === schoolWorkIds[selectedIndex - 1]).type
+					}
+				}
+				return {
+					_id: schoolWorkIds[selectedIndex + 1],
+					type: schoolWork.find(work => work._id === schoolWorkIds[selectedIndex + 1]).type
+				}
 			}
-			return schoolWorkIds[selectedIndex + 1]
 		};
 
-		let newSchoolWorkId = nextSchoolWorkId(FlowRouter.getParam('selectedSchoolWorkId'));
+		let newSchoolWork = nextSchoolWorkId(FlowRouter.getParam('selectedSchoolWorkId'));
 		let dialogId = Dialogs.findOne()._id;
 
 		let pathProperties = {
@@ -303,11 +418,12 @@ Template.app.events({
 							message: error.reason,
 						});
 					} else {
-						Session.set('selectedSchoolWorkId', newSchoolWorkId);
+						Session.set('selectedSchoolWorkId', newSchoolWork._id);
+						Session.set('selectedSchoolWorkType', 'work');
 						if (window.screen.availWidth > 768) {
-							FlowRouter.go('/planning/schoolWork/view/3/' + FlowRouter.getParam('selectedStudentId') +'/'+ FlowRouter.getParam('selectedSchoolYearId') +'/'+ newSchoolWorkId);
+							FlowRouter.go('/planning/' + newSchoolWork.type + '/view/3/' + FlowRouter.getParam('selectedStudentId') +'/'+ FlowRouter.getParam('selectedSchoolYearId') +'/'+ newSchoolWork._id);
 						} else {
-							FlowRouter.go('/planning/schoolWork/view/2/' + FlowRouter.getParam('selectedStudentId') +'/'+ FlowRouter.getParam('selectedSchoolYearId') +'/'+ newSchoolWorkId);
+							FlowRouter.go('/planning/' + newSchoolWork.type + '/view/2/' + FlowRouter.getParam('selectedStudentId') +'/'+ FlowRouter.getParam('selectedSchoolYearId') +'/'+ newSchoolWork._id);
 						}
 						$('.js-deleting').hide();
 					}
@@ -361,7 +477,6 @@ Template.app.events({
 
 	'click .js-delete-segment-confirmed'(event) {
 		event.preventDefault();
-		console.log('delete');
 		
 		$('.js-deleting').show();
 
@@ -399,7 +514,7 @@ Template.app.events({
 		let batchUncheckedLessonProperties = [];
 
 		schoolWorkIds.forEach(workId => {
-			$('#js-schoolWork-track-' + workId).find('.js-segment-checkbox').each(function() {
+			$('#js-work-track-' + workId).find('.js-segment-checkbox').each(function() {
 				if ($(this).val().trim() != 'true') {
 					batchUncheckedLessonProperties.push({ 
 						_id: $(this).attr('data-lesson-id'),
@@ -413,7 +528,7 @@ Template.app.events({
 		let deleteNoteIds = [];
 
 		schoolWorkIds.forEach(workId => {
-			let unchecked = $('#js-schoolWork-track-' + workId).find('.js-segment-checkbox').not(':checked').length;
+			let unchecked = $('#js-work-track-' + workId).find('.js-segment-checkbox').not(':checked').length;
 			if (unchecked === 0) {
 				let note = Notes.findOne({schoolWorkId: workId, weekId: FlowRouter.getParam('selectedWeekId')});
 				if (note) {
@@ -430,15 +545,6 @@ Template.app.events({
 				lesson.order = index + 1
 			});
 		});
-
-		console.log('deleteLessonIds')
-		console.log(deleteLessonIds)
-		console.log('schoolWorkIds')
-		console.log(schoolWorkIds)
-		console.log('batchUncheckedLessonProperties')
-		console.log(batchUncheckedLessonProperties)
-		console.log('deleteNoteIds')
-		console.log(_.uniq(deleteNoteIds))
 
 		let dialogId = Dialogs.findOne()._id;
 		Dialogs.remove({_id: dialogId});
@@ -608,8 +714,8 @@ Template.app.events({
 
 		let path = Paths.findOne({studentId: studentId, timeFrameId: Session.get('selectedSchoolYearId')});
 		
-		if (FlowRouter.current().route.name === 'schoolWorkView') {
-			Session.set('editUrl', '/planning/schoolWork/edit/3/' + studentId +'/'+ Session.get('selectedSchoolYearId') +'/'+ selectedItem(path.firstSchoolWorkId));
+		if (FlowRouter.current().route.name === 'workView') {
+			Session.set('editUrl', '/planning/work/edit/3/' + studentId +'/'+ Session.get('selectedSchoolYearId') +'/'+ selectedItem(path.firstSchoolWorkId));
 		} else if (FlowRouter.current().route.name === 'trackingView' || FlowRouter.current().route.name === 'trackingEdit') {
 			Session.set('editUrl', '/tracking/students/edit/2/' + studentId +'/'+ Session.get('selectedSchoolYearId') +'/'+ FlowRouter.getParam('selectedTermId') +'/'+ FlowRouter.getParam('selectedWeekId'))
 		} else if (FlowRouter.current().route.name === 'reportingView') {
@@ -623,6 +729,7 @@ Template.app.events({
 			selectedTermId: selectedItem(path.firstTermId),
 			selectedWeekId: selectedItem(path.firstWeekId),
 			selectedSchoolWorkId: selectedItem(path.firstSchoolWorkId),
+			selectedSchoolWorkType: selectedItem(path.firstSchoolWorkType),
 			selectedReportingTermId: selectedItem(path.firstTermId),
 			selectedReportingWeekId: selectedItem(path.firstWeekId),
 		});
@@ -640,8 +747,8 @@ Template.app.events({
 
 		let path = Paths.findOne({studentId: Session.get('selectedStudentId'), timeFrameId: schoolYearId});
 
-		if (FlowRouter.current().route.name === 'schoolWorkView') {
-			Session.set('editUrl', '/planning/schoolWork/edit/3/' + Session.get('selectedStudentId') +'/'+ schoolYearId +'/'+ selectedItem(path.firstSchoolWorkId));
+		if (FlowRouter.current().route.name === 'workView') {
+			Session.set('editUrl', '/planning/work/edit/3/' + Session.get('selectedStudentId') +'/'+ schoolYearId +'/'+ selectedItem(path.firstSchoolWorkId));
 		} else if (FlowRouter.current().route.name === 'reportingView') {
 			Session.set('editUrl', 'http://localhost:3000/reporting/edit/2/' + reportId);
 		} else {
@@ -653,6 +760,7 @@ Template.app.events({
 			selectedTermId: selectedItem(path.firstTermId),
 			selectedWeekId: selectedItem(path.firstWeekId),
 			selectedSchoolWorkId: selectedItem(path.firstSchoolWorkId),
+			selectedSchoolWorkType: selectedItem(path.firstSchoolWorkType),
 			selectedReportingTermId: selectedItem(path.firstTermId),
 			selectedReportingWeekId: selectedItem(path.firstWeekId),
 		});
@@ -729,12 +837,23 @@ Template.app.events({
 		});
 	},
 
-	'click .js-schoolWork'(event) {
+	'click .js-subject'(event) {
 		Session.set({
-			selectedStudentId: $(event.currentTarget).attr('data-schoolWork-student'),
-			selectedSchoolYearId: $(event.currentTarget).attr('data-schoolWork-school-Year'),
+			selectedStudentId: $(event.currentTarget).attr('data-subject-student'),
+			selectedSchoolYearId: $(event.currentTarget).attr('data-subject-school-Year'),
 			selectedSchoolWorkId: $(event.currentTarget).attr('id'),
-			editUrl: '/planning/schoolWork/edit/3/' + $(event.currentTarget).attr('data-schoolWork-student') +'/'+ $(event.currentTarget).attr('data-schoolWork-school-Year') +'/'+ $(event.currentTarget).attr('id'),
+			selectedSchoolWorkType: 'subjects',
+			editUrl: '/planning/subjects/edit/3/' + $(event.currentTarget).attr('data-subject-student') +'/'+ $(event.currentTarget).attr('data-subject-school-Year') +'/'+ $(event.currentTarget).attr('id'),
+		});
+	},
+
+	'click .js-work'(event) {
+		Session.set({
+			selectedStudentId: $(event.currentTarget).attr('data-work-student'),
+			selectedSchoolYearId: $(event.currentTarget).attr('data-work-school-Year'),
+			selectedSchoolWorkId: $(event.currentTarget).attr('id'),
+			selectedSchoolWorkType: 'work',
+			editUrl: '/planning/work/edit/3/' + $(event.currentTarget).attr('data-work-student') +'/'+ $(event.currentTarget).attr('data-work-school-Year') +'/'+ $(event.currentTarget).attr('id'),
 		});
 	},
 

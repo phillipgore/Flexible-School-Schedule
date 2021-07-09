@@ -20,6 +20,10 @@ Template.planningList.helpers({
 		{divider: false, classes: '', icon: 'icn-school-work', label: 'School Work'},
 	],
 
+	selectedSchoolWorkType: function() {
+		return Session.get('selectedSchoolWorkType');
+	},
+
 	selectedStudentId: function() {
 		return Session.get('selectedStudentId');
 	},

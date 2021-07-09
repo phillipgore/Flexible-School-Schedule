@@ -1,5 +1,3 @@
-import { Match } from 'meteor/check'
-
 Meteor.methods({
 	updateUser: function(userId, userProperties) {
 		if (userProperties.info.role === 'Application Administrator' || userProperties.info.role === 'Developer') {

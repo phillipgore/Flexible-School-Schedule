@@ -1,6 +1,3 @@
-import {Mongo} from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-
 import {SchoolWork} from '../schoolWork/schoolWork.js';
 import {Resources} from './resources.js';
 import {resourcesInitialIds} from '../../modules/server/initialIds';

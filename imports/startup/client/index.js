@@ -1,5 +1,3 @@
-import {saveNote} from '../../modules/functions';
-
 import './triggers/getInitialData.js';
 
 import './triggers/checkPaymentError';
@@ -13,6 +11,7 @@ import './triggers/isAppAdmin';
 import './triggers/resetSessions';
 import './triggers/scrollReset';
 import './triggers/setFramePosition';
+import './triggers/saveNotes';
 
 function saveNotesOnExit(context) {
 	if (Session.get('hasChanged')) {

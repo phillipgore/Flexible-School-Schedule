@@ -28,7 +28,6 @@
 @import 'padding';
 @import 'backgrounds';
 
-
 .pos-relative {
 	position: relative;
 }
@@ -38,6 +37,11 @@
 
 	&.pos-top-right {
 		top: 0px;
+		right: 0px;
+	}
+
+	&.pos-bottom-right {
+		bottom: 0px;
 		right: 0px;
 	}
 }
@@ -84,6 +88,10 @@
 
 .height-28 {
 	min-height: 28px;
+}
+
+.height-0 {
+	height: 0px;
 }
 
 .video-responsive {

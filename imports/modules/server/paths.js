@@ -2,6 +2,7 @@ import {Paths} from '../../api/paths/paths.js';
 import {Groups} from '../../api/groups/groups.js';
 import {Students} from '../../api/students/students.js';
 import {SchoolYears} from '../../api/schoolYears/schoolYears.js';
+import {Subjects} from '../../api/subjects/subjects.js';
 import {SchoolWork} from '../../api/schoolWork/schoolWork.js';
 import {Terms} from '../../api/terms/terms.js';
 import {Weeks} from '../../api/weeks/weeks.js';
@@ -21,7 +22,6 @@ import _ from 'lodash';
 
 // Upsert Paths
 export function upsertPaths(pathProperties, returnPath, submittedGroupId) {
-	// console.log('upsertPaths start');
 	let groupId = getGroupId(submittedGroupId);
 
 	let studentIds = getStudents(groupId, pathProperties);
@@ -44,17 +44,14 @@ export function upsertPaths(pathProperties, returnPath, submittedGroupId) {
 
 	if (returnPath) {
 		let weekId = Weeks.findOne({schoolYearId: {$in: schoolYearIds}, termId: {$in: termIds}}, {sort: {termOrder: 1, order: 1}})._id;
-		// console.log('upsertPaths end');
 		return {schoolYearId: schoolYearIds[0], termId: termIds[0], weekId: weekId};
 	} else {
-		// console.log('upsertPaths end');
 		return true;
 	}
 };
 
 // Upsert School Work Paths
 export function upsertSchoolWorkPaths(pathProperties, submittedGroupId) {
-	// console.log('upsertSchoolWorkPaths start');
 	let groupId = getGroupId(submittedGroupId);
 
 	let studentIds = getStudents(groupId, pathProperties);
@@ -68,7 +65,6 @@ export function upsertSchoolWorkPaths(pathProperties, submittedGroupId) {
 		});
 	};
 
-	// console.log('upsertSchoolWorkPaths end');
 	return true
 };
 
@@ -220,18 +216,35 @@ function schoolWorkPath(groupId, studentId, schoolYearId) {
 	path.groupId = groupId;
 	path.createdOn = new Date();
 
-	let firstSchoolWork = SchoolWork.findOne(
+	let schoolWork = [];
+	let firstSubject = Subjects.findOne(
 		{groupId: groupId, studentId: studentId, schoolYearId: schoolYearId},
-		{sort: {name: 1}, fields: {_id: 1}}
+		{sort: {name: 1}, fields: {name: 1}}
 	);
-
-	if (firstSchoolWork) {
-		path.firstSchoolWorkId = firstSchoolWork._id
-	} else {
-		path.firstSchoolWorkId = 'empty'
+	if (firstSubject) {
+		firstSubject.type = 'subjects';
+		schoolWork.push(firstSubject);
 	}
 
-	let pathId = Paths.update({studentId: studentId, timeFrameId: schoolYearId, type: 'schoolYear'}, {$set: path}, {upsert: true});
+	let firstWork = SchoolWork.findOne(
+		{groupId: groupId, studentId: studentId, schoolYearId: schoolYearId, subjectId: {$exists: false}},
+		{sort: {name: 1}, fields: {name: 1}}
+	);
+	if (firstWork) {
+		firstWork.type = 'work';
+		schoolWork.push(firstWork);
+	}
+
+	if (schoolWork.length) {
+		let firstSchoolWork = _.sortBy(schoolWork, ['name'])[0];
+		path.firstSchoolWorkId = firstSchoolWork._id;
+		path.firstSchoolWorkType = firstSchoolWork.type;
+	} else {
+		path.firstSchoolWorkId = 'empty';
+		path.firstSchoolWorkType = 'work';
+	}
+
+	Paths.update({groupId: groupId, studentId: studentId, timeFrameId: schoolYearId, type: 'schoolYear'}, {$set: path}, {upsert: true});
 };
 
 

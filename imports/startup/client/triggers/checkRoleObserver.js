@@ -36,7 +36,7 @@ FlowRouter.triggers.enter([checkRoleObserver], {only: [
 	'resourcesView',
 	'resourcesEdit',
 	'schoolWorkList',
-	'schoolWorkNew',
-	'schoolWorkView',
-	'schoolWorkEdit',
+	'workNew',
+	'workView',
+	'workEdit',
 ]});

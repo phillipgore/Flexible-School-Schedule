@@ -1,9 +1,4 @@
-import {Mongo} from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-
 import {Terms} from './terms.js';
-import {Weeks} from '../weeks/weeks.js';
-import {Lessons} from '../lessons/lessons.js';
 
 Meteor.methods({
 	insertTerm(termProperties) {

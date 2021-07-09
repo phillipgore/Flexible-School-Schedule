@@ -37,7 +37,17 @@ ul.list {
 				top: 18px;
 				right: 17px;
 				z-index: 100;
-				opacity: 0.5;
+				opacity: 0.75;
+			}
+
+			&.list-item-dropdown-gray {
+				&:before {
+					color: $color-gray-darker;
+				}
+	
+				&:after {
+					color: $color-gray-lightest
+				}
 			}
 		}
 
@@ -156,6 +166,15 @@ ul.list {
 				margin-right: 9px;
 				text-align: center;
 				color: $color-primary;
+			}
+
+			.list-item-caret {
+				display: inline-block;
+				float: left;
+				font-size: 16px;
+				width: 16px;
+				margin-right: 2px;
+				text-align: center;
 			}
 
 			.list-item-label {

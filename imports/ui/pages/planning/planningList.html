@@ -23,11 +23,14 @@
 				</a>
 			</li>
 			<li class="list-item">
-				<a id="schoolWork" href="/planning/schoolWork/view/2/{{selectedStudentId}}/{{selectedSchoolYearId}}/{{selectedSchoolWorkId}}" class="js-planning list-item-link p-tn-rl-9 
-				{{#if active currentRouteName 'schoolWorkNew'}}active{{/if}}
-				{{#if active currentRouteName 'schoolWorkView'}}active{{/if}}
-				{{#if active currentRouteName 'schoolWorkEdit'}}active{{/if}}">
-					<div class="list-item-icon"><i class="txt-primary icn-school-work"></i></div> 
+				<a id="schoolWork" href="/planning/{{selectedSchoolWorkType}}/view/2/{{selectedStudentId}}/{{selectedSchoolYearId}}/{{selectedSchoolWorkId}}" class="js-planning list-item-link p-tn-rl-9 
+				{{#if active currentRouteName 'subjectsNew'}}active{{/if}}
+				{{#if active currentRouteName 'subjectsView'}}active{{/if}}
+				{{#if active currentRouteName 'subjectsEdit'}}active{{/if}}
+				{{#if active currentRouteName 'workNew'}}active{{/if}}
+				{{#if active currentRouteName 'workView'}}active{{/if}}
+				{{#if active currentRouteName 'workEdit'}}active{{/if}}">
+					<div class="list-item-icon"><i class="txt-primary icn-subjects-school-work"></i></div> 
 					<div class="list-item-label">School Work</div>
 				</a>
 			</li>

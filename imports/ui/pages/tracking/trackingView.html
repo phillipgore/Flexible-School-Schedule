@@ -10,13 +10,15 @@
 		
 		{{#if studentsSchoolYearsCount}}
 			{{#if weekLessonsExist}}
-				<div class="col-lg-1of2">
-					{{> trackingSchoolWork schoolWork=schoolWorkOne}}
+				<div class="row">
+					<div class="col-lg-1of2">
+						{{> trackingSchoolWork schoolWork=schoolWork.columnOne}}
+					</div>
+					<div class="col-lg-1of2">
+						{{> trackingSchoolWork schoolWork=schoolWork.columnTwo}}
+					</div>
+					<div class="col-lg-1of1 tracking-spacer"></div>
 				</div>
-				<div class="col-lg-1of2">
-					{{> trackingSchoolWork schoolWork=schoolWorkTwo}}
-				</div>
-				<div class="col-lg-1of1 tracking-spacer"></div>
 			{{else}}
 				<div class="txt-tn-center m-tn-t-72">
 					<i class="icn-school-work font-size-64 txt-gray m-tn-r-9"></i>

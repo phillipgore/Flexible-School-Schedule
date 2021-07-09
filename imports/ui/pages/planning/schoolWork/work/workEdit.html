@@ -1,4 +1,4 @@
-<template name="schoolWorkEdit">
+<template name="workEdit">
 	{{#unless subscriptionReady}}
 		{{> loading}}
 	{{/unless}}
@@ -31,8 +31,17 @@
 					<p class="p-md line-height-1-5">Be sure to keep General Instructions flexible. For instance, "Read three chapters a week” is always helpful. It doesn’t matter if you speed up, slow down or even stop schooling for a bit. It’s a general goal for every week.</p> 
 					<p class="p-md line-height-1-5">General Instructions appear in the Tracking section where daily work is scheduled and completed.</p>
 				</div>
-				<label class="m-tn-b-3">Student</label>
-				<h3 class="m-tn-b-9">{{selectedStudent.preferredFirstName.name}} {{selectedStudent.lastName}}</h3>
+
+				<label class="m-tn-b-3">Subject</label>
+				<div class="icn-select">
+					<select class="js-subject-select" name="subjectId">
+						<option value="noSubject" {{subjectIsSelected "noSubject"}}>No Subject</option>
+						{{#each subject in subjects}}
+							<option value="{{subject._id}}" {{subjectIsSelected subject._id}}>{{subject.name}}</option>
+						{{/each}}
+					</select>
+				</div>
+
 				<div class="well bg-gray-lighter m-tn-b-18">
 					<label>School Work Name</label>
 					<input type="text" name="name" id="name" placeholder="Math" autocomplete="off" value="{{selectedSchoolWork.name}}">

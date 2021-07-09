@@ -1,4 +1,4 @@
-<template name="schoolWorkNew">
+<template name="workNew">
 	{{#unless subscriptionReady}}
 		{{> loading}}
 	{{/unless}}
@@ -32,16 +32,17 @@
 						<div id="playerOne"></div>
 					</div>
 				</div>
-				<label class="m-tn-b-6">Students</label>
-				{{#each student in students}}
-					<div>
-						<label class="checkbox">
-							<input class="js-checkbox js-student-id" type="checkbox" name="studentId" id="{{student._id}}" value="{{isChecked student._id}}" checked="{{isChecked student._id}}">
-							<div class="checkbox-icon"></div> 
-							<div class="checkbox-label">{{student.preferredFirstName.name}} {{student.lastName}}</div>
-						</label>
-					</div>
-				{{/each}}
+
+				<label class="m-tn-b-3">Subject</label>
+				<div class="icn-select">
+					<select class="js-subject-select" name="subjectId">
+						<option selected value="noSubject">No Subject</option>
+						{{#each subject in subjects}}
+							<option value="{{subject._id}}">{{subject.name}}</option>
+						{{/each}}
+					</select>
+				</div>
+
 				<label id="studentId-error" class="student-error hide" for="studentId">At least one student must be checked.</label>
 				<div class="well bg-gray-lighter m-tn-b-18">
 					<label>School Work Name</label>
@@ -184,14 +185,8 @@
 				</div>
 
 				<label class="m-tn-b-3">School Year</label>
-				<div class="icn-select">
-					<select class="js-school-year-select" name="schoolYearId">
-						{{#each schoolYear in schoolYears}}
-							<option value="{{schoolYear._id}}" {{isSelected schoolYear._id}}>{{schoolYear.startYear}}-{{schoolYear.endYear}}</option>
-						{{/each}}
-					</select>
-				</div>
-
+				<h3 class="m-tn-b-9">{{selectedSchoolYear.startYear}}-{{selectedSchoolYear.endYear}}</h3>
+				
 				{{#each term in terms}}
 				<div id="{{term._id}}" class="js-term-container well bg-gray-lighter m-tn-b-9">
 					<h3 class="m-tn-b-9">Term {{term.order}}</h3>

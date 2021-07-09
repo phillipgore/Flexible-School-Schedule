@@ -4,27 +4,10 @@
 	{{/unless}}
 	<main class="app-content app-content-preceeds-toolbar">
 		{{#if studentsSchoolYearsCount}}
-			{{#if schoolWorkCount}}
-				{{#if schoolWork.count}}
-					<ul class="list">
-						{{#if activeRoute currentRouteName 'schoolWorkNew'}}
-							<li class="list-item">
-								<span class="list-item-inner p-tn-rl-9 active">
-									<div class="list-item-icon"><i class="txt-primary icn-school-work"></i></div> 
-									<div class="list-item-label font-style-italic font-weight-normal"> New School Work
-									</div>
-								</span>
-							</li>
-						{{/if}}
-						{{> schoolWorkEach schoolWork=schoolWork}}
-					</ul>
-				{{else}}
-					<div class="txt-tn-center m-tn-t-72">
-						<i class="icn-school-work font-size-64 txt-gray"></i>
-						<h1 class="m-tn-t-36">Sorry</h1>
-						<p class="m-tn-t-3 m-tn-b-21 m-tn-rl-36 txt-gray-darkest">No schoolWork fit the selected criteria.</p>
-					</div>
-				{{/if}}
+			{{#if schooWorkList}}
+				<ul id="js-school-work-sortable" class="list">
+					{{> schoolWorkEach schoolWork=schooWorkList}}
+				</ul>
 			{{else}}
 				<div class="txt-tn-center m-tn-t-72">
 					<i class="icn-school-work font-size-64 txt-gray"></i>
@@ -33,12 +16,12 @@
 				</div>
 			{{/if}}
 		{{else}}
-		<div class="txt-tn-center m-tn-t-72">
-			<i class="icn-school-work font-size-64 txt-gray m-tn-r-9"></i>
-			<h1 class="m-tn-t-36">Requires Students<br>and School Years</h1>
-			<p class="dis-tn-none dis-sm-block m-tn-t-3 m-tn-b-21 m-tn-rl-36 txt-gray-darkest">Click the plus icon above to add Students or School Work.</p>
-			<p class="dis-sm-none m-tn-t-3 m-tn-b-21 m-tn-rl-36 txt-gray-darkest">Navigate to the Students or School Work sections to add Students or School Work.</p>
-		</div>
+			<div class="txt-tn-center m-tn-t-72">
+				<i class="icn-school-work font-size-64 txt-gray m-tn-r-9"></i>
+				<h1 class="m-tn-t-36">Requires Students<br>and School Years</h1>
+				<p class="dis-tn-none dis-sm-block m-tn-t-3 m-tn-b-21 m-tn-rl-36 txt-gray-darkest">Click the plus icon above to add Students or School Work.</p>
+				<p class="dis-sm-none m-tn-t-3 m-tn-b-21 m-tn-rl-36 txt-gray-darkest">Navigate to the Students or School Work sections to add Students or School Work.</p>
+			</div>
 		{{/if}}
 	</main>
 </template>

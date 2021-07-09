@@ -2,6 +2,14 @@
 	background-color: $color-primary;
 }
 
+.bg-primary-light, .bg-success-light {
+	background-color: $color-primary-light;
+}
+
+.bg-primary-lighter, .bg-success-lighter {
+	background-color: $color-primary-lighter;
+}
+
 .bg-primary-lightest, .bg-success-lightest {
 	background-color: lighten($color-primary, 35%)
 }

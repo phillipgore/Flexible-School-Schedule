@@ -67,7 +67,7 @@ Template.createAccount.helpers({
 			let price = parseInt(Meteor.settings.public.stripePlanPrice);
 			let percentOff = Session.get('coupon').percent_off;
 			let trialPrice = getTrialPrice(price, percentOff);
-			console.log(trialPrice)
+
 			if (trialPrice === '0.00') {
 				return 'Free';
 			}

@@ -71,6 +71,7 @@ Template.officeAccountsView.events({
 					selectedWeekId: '',
 					selectedReportingWeekId: '',
 					selectedSchoolWorkId: '',
+					selectedSchoolWorkType: '',
 					selectedReportId: '',
 					selectedUserId: '',
 					planningPathName: '',
